@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Join Nautilus International online</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --nautilus-navy: #003764;
+    --nautilus-navy-dark: #002244;
+    --nautilus-blue: #0066a4;
+    --nautilus-blue-light: #e9f2fa;
+    --nautilus-teal: #00838f;
+    --nautilus-teal-light: #e0f4f4;
+    --nautilus-orange: #e87722;
+    --nautilus-orange-light: #fff4ec;
+    --nautilus-red: #c62828;
+    --white: #ffffff;
+    --gray-50: #f8f9fa;
+    --gray-100: #f0f1f3;
+    --gray-200: #dde0e4;
+    --gray-300: #c4c8ce;
+    --gray-400: #9ea4ad;
+    --gray-600: #5c6370;
+    --gray-800: #2c3e50;
+    --radius: 4px;
+    --radius-lg: 8px;
+    --shadow: 0 2px 8px rgba(0,55,100,0.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Source Sans 3', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--gray-50); color: var(--gray-800);
+    min-height: 100vh; font-size: 16px; line-height: 1.5;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--white); border-bottom: 1px solid var(--gray-200);
+    padding: 0 24px; height: 72px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .site-header .logo-link { display: flex; align-items: center; text-decoration: none; gap: 10px; }
+  .site-header .logo-mark {
+    width: 44px; height: 44px; background: var(--nautilus-navy);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  }
+  .site-header .logo-mark svg { width: 24px; height: 24px; }
+  .site-header .logo-text {
+    font-weight: 700; font-size: 17px; color: var(--nautilus-navy);
+    letter-spacing: -0.01em; line-height: 1.2;
+  }
+  .site-header .logo-text span {
+    display: block; font-weight: 400; font-size: 12px;
+    color: var(--gray-600); letter-spacing: 0.02em;
+  }
+  .site-header .demo-tag {
+    margin-left: auto; background: var(--nautilus-orange); color: white;
+    font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 3px;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+
+  /* ── HERO ── */
+  .hero-banner { background: var(--nautilus-navy); padding: 36px 24px 28px; text-align: center; }
+  .hero-banner h1 { color: var(--white); font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+  .hero-banner p { color: rgba(255,255,255,0.7); font-size: 15px; }
+
+  /* ── STEP BAR ── */
+  .step-bar {
+    background: var(--white); border-bottom: 1px solid var(--gray-200);
+    padding: 0 24px; display: flex; justify-content: center;
+  }
+  .step-bar-inner { display: flex; max-width: 640px; width: 100%; }
+  .step-tab {
+    flex: 1; text-align: center; padding: 14px 8px;
+    font-size: 13px; font-weight: 600; color: var(--gray-400);
+    border-bottom: 3px solid transparent; transition: all 0.2s;
+  }
+  .step-tab.active { color: var(--nautilus-navy); border-bottom-color: var(--nautilus-orange); }
+  .step-tab.done { color: var(--nautilus-teal); border-bottom-color: var(--nautilus-teal); }
+  .step-tab .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%;
+    font-size: 12px; font-weight: 700; margin-right: 4px;
+    background: var(--gray-200); color: var(--gray-400); vertical-align: middle;
+  }
+  .step-tab.active .step-num { background: var(--nautilus-navy); color: white; }
+  .step-tab.done .step-num { background: var(--nautilus-teal); color: white; }
+
+  /* ── CONTAINER ── */
+  .container { max-width: 640px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg); box-shadow: var(--shadow);
+    padding: 32px; animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card .flow-tag {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 3px 10px; border-radius: 3px; margin-bottom: 12px;
+    background: var(--nautilus-blue-light); color: var(--nautilus-blue);
+  }
+  .card h2 {
+    font-size: 22px; font-weight: 700; color: var(--nautilus-navy);
+    margin-bottom: 6px; line-height: 1.3;
+  }
+  .card .subtitle { font-size: 15px; color: var(--gray-600); margin-bottom: 24px; }
+
+  /* ── BREADCRUMBS ── */
+  .breadcrumbs {
+    display: flex; flex-wrap: wrap; gap: 2px; margin-bottom: 20px;
+    font-size: 13px; color: var(--gray-400); align-items: center;
+  }
+  .breadcrumbs .bc-answer { color: var(--nautilus-blue); font-weight: 600; }
+  .breadcrumbs .bc-sep { margin: 0 4px; color: var(--gray-300); }
+
+  /* ── OPTIONS ── */
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option-btn {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: var(--white); border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius); padding: 16px 18px;
+    cursor: pointer; transition: all 0.15s ease;
+    text-align: left; font-family: inherit; font-size: 15px;
+    color: var(--gray-800); width: 100%;
+  }
+  .option-btn:hover { border-color: var(--nautilus-blue); background: var(--nautilus-blue-light); }
+  .option-btn .radio {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid var(--gray-300); flex-shrink: 0;
+    margin-top: 2px; transition: all 0.15s;
+  }
+  .option-btn:hover .radio { border-color: var(--nautilus-blue); }
+  .option-btn .label { font-weight: 600; line-height: 1.4; }
+  .option-btn .note {
+    display: block; font-size: 13px; color: var(--gray-600);
+    font-weight: 400; margin-top: 2px; line-height: 1.4;
+  }
+
+  /* ── FIELDSETS ── */
+  .option-fieldset {
+    border: 1.5px solid var(--gray-200); border-radius: var(--radius-lg);
+    padding: 0; margin: 0 0 12px 0; overflow: hidden;
+  }
+  .option-fieldset legend {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--gray-600);
+    padding: 12px 18px 8px; width: 100%;
+    background: var(--gray-100); border-bottom: 1px solid var(--gray-200);
+    float: left;
+  }
+  .option-fieldset .fieldset-body { clear: both; display: flex; flex-direction: column; }
+  .option-fieldset .option-btn {
+    border: none; border-radius: 0; border-bottom: 1px solid var(--gray-100);
+  }
+  .option-fieldset .option-btn:last-child { border-bottom: none; }
+  .option-fieldset .option-btn:hover { background: var(--nautilus-blue-light); }
+
+  /* ── OUTCOME CARDS ── */
+  .outcome-card {
+    border: 2px solid var(--nautilus-teal); background: var(--nautilus-teal-light);
+    border-radius: var(--radius-lg); padding: 24px; text-align: center; margin-bottom: 24px;
+  }
+  .outcome-card .badge {
+    display: inline-block; background: var(--nautilus-teal); color: white;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; padding: 3px 10px; border-radius: 3px; margin-bottom: 10px;
+  }
+  .outcome-card h3 { font-size: 20px; font-weight: 700; color: var(--nautilus-navy); margin-bottom: 4px; }
+  .outcome-card p { font-size: 14px; color: var(--gray-600); }
+
+  .unclear-card {
+    border: 2px solid var(--nautilus-orange); background: var(--nautilus-orange-light);
+    border-radius: var(--radius-lg); padding: 24px; text-align: center; margin-bottom: 24px;
+  }
+  .unclear-card .badge {
+    display: inline-block; background: var(--nautilus-orange); color: white;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; padding: 3px 10px; border-radius: 3px; margin-bottom: 10px;
+  }
+  .unclear-card h3 { font-size: 20px; font-weight: 700; color: var(--nautilus-navy); margin-bottom: 4px; }
+  .unclear-card p { font-size: 14px; color: var(--gray-600); }
+
+  /* ── FORM FIELDS ── */
+  .form-grid { display: flex; flex-direction: column; gap: 16px; }
+  .form-row { display: flex; gap: 12px; }
+  .form-row > .field { flex: 1; }
+  .field label {
+    display: block; font-size: 13px; font-weight: 700;
+    color: var(--gray-800); margin-bottom: 5px;
+  }
+  .field label .req { color: var(--nautilus-red); }
+  .field input, .field select {
+    width: 100%; padding: 10px 12px;
+    border: 1.5px solid var(--gray-200); border-radius: var(--radius);
+    font-family: inherit; font-size: 15px; color: var(--gray-800);
+    background: var(--white); transition: border-color 0.15s;
+  }
+  .field input:focus, .field select:focus {
+    outline: none; border-color: var(--nautilus-blue);
+    box-shadow: 0 0 0 3px rgba(0,102,164,0.1);
+  }
+  .field input::placeholder { color: var(--gray-400); }
+  .field .error-msg {
+    display: none; font-size: 12px; color: var(--nautilus-red);
+    margin-top: 3px;
+  }
+  .field.has-error input, .field.has-error select {
+    border-color: var(--nautilus-red);
+    box-shadow: 0 0 0 3px rgba(198,40,40,0.08);
+  }
+  .field.has-error .error-msg { display: block; }
+
+  .section-heading {
+    font-size: 16px; font-weight: 700; color: var(--nautilus-navy);
+    padding-bottom: 8px; border-bottom: 2px solid var(--nautilus-orange);
+    margin-bottom: 16px; margin-top: 8px;
+  }
+
+  /* ── OPEN QUESTIONS (internal team notes) ── */
+  .open-questions {
+    margin-top: 20px; border-left: 3px solid #b388ff;
+    background: #f3e8ff; border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 14px 18px; font-size: 13px; color: #4a148c; line-height: 1.6;
+  }
+  .open-questions .oq-header {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: #7c43bd; margin-bottom: 8px;
+  }
+  .open-questions .oq-header svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .open-questions ul { margin: 0; padding-left: 18px; }
+  .open-questions li { margin-bottom: 4px; }
+  .open-questions li:last-child { margin-bottom: 0; }
+
+  /* ── PAYMENT TOGGLE ── */
+  .pay-toggle {
+    display: flex; gap: 0; margin-bottom: 16px;
+    border: 1.5px solid var(--gray-200); border-radius: var(--radius); overflow: hidden;
+  }
+  .pay-toggle button {
+    flex: 1; padding: 11px 16px; font-family: inherit; font-size: 14px;
+    font-weight: 600; border: none; cursor: pointer;
+    background: var(--white); color: var(--gray-600); transition: all 0.15s;
+  }
+  .pay-toggle button + button { border-left: 1.5px solid var(--gray-200); }
+  .pay-toggle button.active {
+    background: var(--nautilus-navy); color: white;
+  }
+
+  /* ── BUTTONS ── */
+  .btn-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--gray-100);
+  }
+  .btn-back {
+    background: none; border: 1px solid var(--gray-200); border-radius: var(--radius);
+    cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 600;
+    color: var(--gray-600); padding: 10px 20px; transition: all 0.15s;
+  }
+  .btn-back:hover { border-color: var(--gray-400); color: var(--gray-800); }
+  .btn-primary {
+    background: var(--nautilus-orange); color: white; border: none;
+    border-radius: var(--radius); padding: 11px 28px;
+    font-family: inherit; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .btn-primary:hover { background: #d06a1d; }
+
+  .design-notes {
+    margin-top: 24px; background: var(--nautilus-orange-light);
+    border: 1.5px dashed var(--nautilus-orange); border-radius: var(--radius-lg);
+    padding: 16px 20px; font-size: 13px; color: var(--gray-600); line-height: 1.6;
+  }
+  .design-notes strong {
+    display: block; color: var(--nautilus-navy); font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px;
+  }
+
+  .complete-card { text-align: center; padding: 48px 32px; }
+  .complete-card .check-circle {
+    width: 60px; height: 60px; background: var(--nautilus-teal);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px; color: white; font-size: 26px;
+  }
+  .btn-restart {
+    margin-top: 20px; background: var(--nautilus-navy); color: white;
+    border: none; border-radius: var(--radius); padding: 11px 28px;
+    font-family: inherit; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .btn-restart:hover { background: var(--nautilus-blue); }
+
+  /* ── MEMBER AREA ── */
+  .member-area { max-width: 800px; margin: 0 auto; animation: fadeIn 0.3s ease; }
+  .member-header {
+    background: var(--nautilus-navy); padding: 28px 32px 0; border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+  .member-header h1 {
+    color: var(--white); font-size: 28px; font-weight: 700; margin-bottom: 16px;
+    text-transform: uppercase; letter-spacing: -0.01em;
+  }
+  .member-tabs {
+    display: flex; gap: 0; overflow-x: auto;
+  }
+  .member-tabs span {
+    padding: 10px 16px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5);
+    white-space: nowrap; border-bottom: 3px solid transparent;
+  }
+  .member-tabs span.active { color: white; border-bottom-color: var(--nautilus-orange); }
+  .member-body {
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-top: none; border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    padding: 28px 32px; display: flex; gap: 24px;
+  }
+  .profile-card {
+    flex: 1; border: 2px solid var(--nautilus-teal); border-radius: var(--radius-lg);
+    padding: 24px; display: flex; gap: 20px; align-items: flex-start;
+  }
+  .profile-avatar {
+    width: 72px; height: 72px; border-radius: 50%; flex-shrink: 0;
+    background: var(--gray-200); display: flex; align-items: center; justify-content: center;
+    font-size: 28px; color: var(--gray-400);
+  }
+  .profile-info h3 { font-size: 20px; font-weight: 700; color: var(--nautilus-navy); margin-bottom: 2px; }
+  .profile-info .role { font-size: 15px; font-weight: 600; color: var(--nautilus-teal); }
+  .profile-info .employer { font-size: 14px; color: var(--gray-600); margin-bottom: 10px; }
+  .profile-info .member-no {
+    display: inline-block; background: var(--gray-100); border: 1px solid var(--gray-200);
+    border-radius: var(--radius); padding: 5px 12px; font-size: 13px; font-weight: 600;
+    color: var(--gray-800); font-family: monospace; margin-bottom: 10px;
+  }
+  .profile-info .btn-settings {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--white); border: 1.5px solid var(--gray-200); border-radius: var(--radius);
+    padding: 7px 14px; font-size: 13px; font-weight: 600; color: var(--gray-800);
+    cursor: default;
+  }
+  .quicklinks {
+    width: 280px; flex-shrink: 0;
+  }
+  .quicklinks h4 { font-size: 14px; font-weight: 700; color: var(--nautilus-navy); margin-bottom: 12px; }
+  .quicklink-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; background: var(--gray-50); border: 1px solid var(--gray-100);
+    border-radius: var(--radius); margin-bottom: 8px;
+    font-size: 14px; font-weight: 600; color: var(--nautilus-navy);
+  }
+  .quicklink-item .ql-icon { margin-right: 8px; }
+  .quicklink-item .ql-arrow { color: var(--gray-400); }
+
+  /* ── COMPLETE PROFILE PROMPT ── */
+  .profile-prompt {
+    margin-top: 20px; background: var(--nautilus-orange-light);
+    border: 2px solid var(--nautilus-orange); border-radius: var(--radius-lg);
+    padding: 20px 24px; text-align: center;
+  }
+  .profile-prompt h4 {
+    font-size: 16px; font-weight: 700; color: var(--nautilus-navy); margin-bottom: 4px;
+  }
+  .profile-prompt p { font-size: 14px; color: var(--gray-600); margin-bottom: 14px; }
+  .profile-prompt .incomplete-fields {
+    display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+  }
+  .profile-prompt .incomplete-fields span {
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: 20px; padding: 4px 12px; font-size: 12px;
+    color: var(--gray-600); font-weight: 600;
+  }
+
+  /* ── CRM PANEL ── */
+  .crm-panel {
+    margin-top: 32px; border: 2px dashed var(--gray-300); border-radius: var(--radius-lg);
+    padding: 24px 28px; background: var(--white);
+  }
+  .crm-panel-header {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+    padding-bottom: 12px; border-bottom: 2px solid var(--gray-200);
+  }
+  .crm-panel-header .crm-badge {
+    background: var(--gray-800); color: white; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 3px 8px; border-radius: 3px;
+  }
+  .crm-panel-header h4 {
+    font-size: 15px; font-weight: 700; color: var(--gray-800);
+  }
+  .crm-panel-header p { font-size: 12px; color: var(--gray-400); margin-left: auto; }
+  .crm-section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--gray-400); margin: 16px 0 8px;
+  }
+  .crm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .crm-field {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 6px 10px; border-radius: 3px; font-size: 13px;
+  }
+  .crm-field:nth-child(odd) { background: var(--gray-50); }
+  .crm-field .crm-key { color: var(--gray-600); font-family: monospace; font-size: 12px; }
+  .crm-field .crm-val { font-weight: 600; color: var(--gray-800); text-align: right; max-width: 60%; }
+  .crm-field .crm-val.empty { color: var(--gray-300); font-weight: 400; font-style: italic; }
+
+  @media (max-width: 700px) {
+    .member-body { flex-direction: column; }
+    .quicklinks { width: 100%; }
+    .crm-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 480px) {
+    .card { padding: 24px 20px; }
+    .hero-banner h1 { font-size: 22px; }
+    .step-tab { font-size: 11px; padding: 12px 4px; }
+    .step-tab .step-num { width: 18px; height: 18px; font-size: 10px; }
+    .form-row { flex-direction: column; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <a class="logo-link" href="#">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l7 4.5-7 4.5z" fill="white"/></svg>
+    </div>
+    <div class="logo-text">Nautilus International<span>Maritime Professionals' Union</span></div>
+  </a>
+  <span class="demo-tag">Prototype</span>
+</div>
+
+<div class="hero-banner">
+  <h1>Join online</h1>
+  <p>Select from our online specialist membership packages whatever your sector.</p>
+</div>
+
+<div class="step-bar"><div class="step-bar-inner" id="stepBar"></div></div>
+<div class="container" id="app"></div>
+
+<script>
+// ─── DATA MODEL — language taken directly from Duncan's spreadsheet ───
+const QUESTIONS = {
+  Q1: {
+    flow: null,
+    question: "Are you…",
+    subtitle: "We need some information from you to give you the membership package most tailored to your needs, and to set up your account with us.",
+    options: [
+      { label: "Working", routesTo: "Q2" },
+      { label: "Studying", routesTo: "Q3" },
+      { label: "Retired", routesTo: "Q4" },
+    ],
+    openQuestions: ["Should 'Retired' also cover unemployed or long-term sick joiners? If so, does the label need to change?"]
+  },
+  Q2: {
+    flow: "Working",
+    question: "My employer is based…",
+    options: [
+      { label: "In the UK", routesTo: "Q5" },
+      { label: "In the Netherlands", routesTo: "Q6" },
+      { label: "In Switzerland", routesTo: "Q7" },
+      { label: "In another country", routesTo: "Q8" },
+      { label: "I'm not sure", routesTo: "Q8" },
+    ],
+    openQuestions: ["'In another country' and 'I'm not sure' both currently lead to the UK sea-role questions (Q8). Should either or both have their own unique pathways? Should they be combined into a single option?"]
+  },
+  Q3: {
+    flow: "Studying",
+    question: "My learning institution is based…",
+    options: [
+      { label: "In the UK", note: "I am in training for an operational CoC as a cadet or trainee officer", outcome: "UK C1 membership" },
+      { label: "In the Netherlands", outcome: "NL Category 4 membership" },
+      { label: "In Switzerland", note: "I am an apprentice", outcome: "CH Apprentice fee" },
+      { label: "In another country", unclear: true },
+    ],
+    openQuestions: ["'In another country' — should we collect more details to route them, or just direct to membership team?"]
+  },
+  Q4: {
+    flow: "Retired",
+    question: "My last employer was based…",
+    options: [
+      { label: "In the UK", outcome: "UK Retired membership" },
+      { label: "In the Netherlands", outcome: "NL Category 3" },
+      { label: "In Switzerland", outcome: "CH Pensioner / unemployed fee" },
+      { label: "In another country", unclear: true },
+      { label: "I'm not sure", unclear: true },
+    ],
+    openQuestions: ["'In another country' and 'I'm not sure' — should we collect more details to try to route them, or just direct to membership team?"]
+  },
+  Q5: {
+    flow: "Working for a UK employer",
+    question: "Do you work…",
+    options: [
+      { label: "At sea", routesTo: "Q8" },
+      { label: "Ashore", routesTo: "Q9" },
+    ]
+  },
+  Q6: {
+    flow: "Working for a Dutch employer",
+    question: "Select the membership that applies to you:",
+    options: [
+      { label: "I am 23 years old or older", outcome: "NL Category 1" },
+      { label: "I am 22 years old or younger", outcome: "NL Category 2" },
+    ]
+  },
+  Q7: {
+    flow: "Working for a Swiss employer",
+    question: "Select the membership that applies to you:",
+    options: [
+      { label: "My salary is over CHF 2,500/month", outcome: "CH Normal fee" },
+      { label: "My salary is under CHF 2,500/month", unclear: true },
+    ],
+    openQuestions: ["Under CHF 2,500 — does this need evidence, or can the reduced fee be applied online without verification?"]
+  },
+  Q8: {
+    flow: "Working at sea",
+    question: "Select the membership that applies to you:",
+    useFieldsets: true,
+    fieldsets: [
+      {
+        legend: "Maritime membership",
+        options: [
+          { label: "Seagoing officer — certified", note: "I have a valid management or operational CoC", outcome: "UK F1 membership" },
+          { label: "Seagoing officer — uncertified", note: "I am an uncertified officer working onboard ships", outcome: "UK P1 membership" },
+          { label: "Marine rating", outcome: "UK R1 membership" },
+        ]
+      },
+      {
+        legend: "Yacht sector",
+        options: [
+          { label: "Yacht officer", outcome: "UK Y1 membership" },
+          { label: "Yacht crew", outcome: "UK Y2 membership" },
+        ]
+      },
+      {
+        legend: "Other",
+        options: [
+          { label: "None of these apply", unclear: true },
+        ]
+      }
+    ],
+    openQuestions: ["'None of these apply' — should we collect more details to try to route them, or just direct to membership team?"]
+  },
+  Q9: {
+    flow: "Working onshore in the UK",
+    question: "Select the membership that applies to you:",
+    options: [
+      { label: "Pilot, Harbourmaster, DPA or in a regulated role", outcome: "UK P1 membership" },
+      { label: "Other shore side role", outcome: "UK S1 membership" },
+      { label: "I work less than 30 hours in a shore side role", unclear: true },
+    ],
+    openQuestions: ["Under 30 hours — does this need evidence, or can it be handled online without verification?"]
+  }
+};
+
+const STEP_NAMES = ["Your situation", "Payment", "Confirmation"];
+
+let state = { history: [], currentQ: "Q1", selectedOutcome: null, unclearOutcome: null, phase: "questions", payMethod: "dd", formData: {} };
+
+function getStepIndex() {
+  if (state.phase === "complete") return 2;
+  if (state.phase === "payment") return 1;
+  if (state.phase === "unclear") return 1;
+  return 0;
+}
+
+function getBreadcrumbs() {
+  return state.history.map(h => {
+    const q = QUESTIONS[h.questionId];
+    if (h.fieldsetIdx !== undefined) return { answer: q.fieldsets[h.fieldsetIdx].options[h.optionIdx].label };
+    return { answer: q.options[h.chosenIndex].label };
+  });
+}
+
+function render() {
+  renderStepBar();
+  const app = document.getElementById("app");
+  const container = document.getElementById("app");
+  // Widen for member area
+  container.style.maxWidth = state.phase === "complete" ? "860px" : "640px";
+  // Hide step bar on complete
+  document.getElementById("stepBar").parentElement.style.display = state.phase === "complete" ? "none" : "";
+  if (state.phase === "questions") app.innerHTML = renderQuestion();
+  else if (state.phase === "unclear") app.innerHTML = renderUnclear();
+  else if (state.phase === "payment") app.innerHTML = renderPayment();
+  else app.innerHTML = renderComplete();
+  bindEvents();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderStepBar() {
+  const idx = getStepIndex();
+  document.getElementById("stepBar").innerHTML = STEP_NAMES.map((n, i) => {
+    const cls = i < idx ? "done" : i === idx ? "active" : "";
+    return `<div class="step-tab ${cls}"><span class="step-num">${i < idx ? "✓" : i+1}</span>${n}</div>`;
+  }).join("");
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[state.currentQ];
+  const crumbs = getBreadcrumbs();
+  let bc = crumbs.length ? `<div class="breadcrumbs">${crumbs.map((c,i) =>
+    `<span class="bc-answer">${c.answer}</span>${i<crumbs.length-1?'<span class="bc-sep">›</span>':''}`
+  ).join("")}</div>` : "";
+  const flowTag = q.flow ? `<div class="flow-tag">${q.flow}</div>` : "";
+  const subtitle = q.subtitle ? `<div class="subtitle">${q.subtitle}</div>` : "";
+
+  let optionsHtml = "";
+  if (q.useFieldsets) {
+    optionsHtml = q.fieldsets.map((fs, fi) => {
+      const btns = fs.options.map((o, oi) =>
+        `<button class="option-btn" data-fieldset="${fi}" data-opt="${oi}">
+          <div class="radio"></div>
+          <div><span class="label">${o.label}</span>${o.note?`<span class="note">${o.note}</span>`:""}</div>
+        </button>`
+      ).join("");
+      return `<fieldset class="option-fieldset"><legend>${fs.legend}</legend><div class="fieldset-body">${btns}</div></fieldset>`;
+    }).join("");
+  } else {
+    optionsHtml = `<div class="options">${q.options.map((o,i) =>
+      `<button class="option-btn" data-idx="${i}">
+        <div class="radio"></div>
+        <div><span class="label">${o.label}</span>${o.note?`<span class="note">${o.note}</span>`:""}</div>
+      </button>`
+    ).join("")}</div>`;
+  }
+
+  const back = state.history.length ? `<button class="btn-back" id="backBtn">← Previous</button>` : `<span></span>`;
+  const oqHtml = q.openQuestions ? `<div class="open-questions"><div class="oq-header"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 11a1 1 0 110-2 1 1 0 010 2zm1-3.5a.5.5 0 01-1 0v-.2c0-.5.3-.9.7-1.1l.5-.3c.3-.2.5-.5.5-.9 0-.6-.4-1-1-1s-1 .4-1 1a.5.5 0 01-1 0c0-1.1.9-2 2-2s2 .9 2 2c0 .7-.4 1.3-1 1.7l-.5.3c-.1.1-.2.2-.2.4v.1z"/></svg>Open questions</div><ul>${q.openQuestions.map(oq => `<li>${oq}</li>`).join("")}</ul></div>` : "";
+  return `<div class="card">${bc}${flowTag}<h2>${q.question}</h2>${subtitle}${optionsHtml}${oqHtml}<div class="btn-row">${back}<span></span></div></div>`;
+}
+
+function renderUnclear() {
+  const crumbs = getBreadcrumbs();
+  let bc = `<div class="breadcrumbs">${crumbs.map((c,i) =>
+    `<span class="bc-answer">${c.answer}</span>${i<crumbs.length-1?'<span class="bc-sep">›</span>':''}`
+  ).join("")}</div>`;
+
+  return `<div class="card">${bc}
+    <div class="unclear-card"><div class="badge">Action needed</div><h3>Contact the membership team</h3><p>${state.unclearOutcome}</p></div>
+    <p style="font-size:15px;color:var(--gray-600);text-align:center;margin-bottom:8px;">Our membership team can help you find the right membership category.</p>
+    <p style="font-size:15px;text-align:center;"><strong>Email:</strong> <a href="mailto:membership@nautilusint.org" style="color:var(--nautilus-blue);">membership@nautilusint.org</a></p>
+    <div class="btn-row"><button class="btn-back" id="backBtn">← Previous</button><span></span></div>
+  </div>`;
+}
+
+function renderPayment() {
+  const crumbs = getBreadcrumbs();
+  let bc = `<div class="breadcrumbs">${crumbs.map((c,i) =>
+    `<span class="bc-answer">${c.answer}</span>${i<crumbs.length-1?'<span class="bc-sep">›</span>':''}`
+  ).join("")}</div>`;
+
+  let outcomeHtml = "";
+  if (state.selectedOutcome) {
+    outcomeHtml = `<div class="outcome-card"><div class="badge">Your membership</div><h3>${state.selectedOutcome}</h3><p>Based on your answers, this is the recommended membership category.</p></div>`;
+  }
+
+  const isDd = state.payMethod === "dd";
+  const payFields = isDd
+    ? `<div class="form-row">
+        <div class="field"><label>Sort code <span class="req">*</span></label><input type="text" data-crm="SortCode" autocomplete="off" placeholder="00-00-00" required><span class="error-msg">Required</span></div>
+        <div class="field"><label>Account number <span class="req">*</span></label><input type="text" data-crm="Accountnumber" autocomplete="off" required><span class="error-msg">Required</span></div>
+      </div>
+      <div class="field"><label>Account holder name <span class="req">*</span></label><input type="text" data-crm="Accountname" autocomplete="cc-name" required><span class="error-msg">Required</span></div>`
+    : `<div class="field"><label>Card number <span class="req">*</span></label><input type="text" data-crm="CardNumber" autocomplete="cc-number" placeholder="0000 0000 0000 0000" required><span class="error-msg">Required</span></div>
+      <div class="form-row">
+        <div class="field"><label>Expiry date <span class="req">*</span></label><input type="text" data-crm="CardExpiry" autocomplete="cc-exp" placeholder="MM / YY" required><span class="error-msg">Required</span></div>
+        <div class="field"><label>CVV <span class="req">*</span></label><input type="text" data-crm="CardCVV" autocomplete="cc-csc" placeholder="000" required><span class="error-msg">Required</span></div>
+      </div>
+      <div class="field"><label>Name on card <span class="req">*</span></label><input type="text" data-crm="Accountname" autocomplete="cc-name" required><span class="error-msg">Required</span></div>`;
+
+  return `<div class="card">${bc}${outcomeHtml}
+    <div class="section-heading">Personal details</div>
+    <div class="form-grid">
+      <div class="form-row">
+        <div class="field"><label>First name <span class="req">*</span></label><input type="text" data-crm="FirstName" autocomplete="given-name" required><span class="error-msg">Required</span></div>
+        <div class="field"><label>Middle name</label><input type="text" data-crm="MiddleName" autocomplete="additional-name"></div>
+        <div class="field"><label>Last name <span class="req">*</span></label><input type="text" data-crm="LastName" autocomplete="family-name" required><span class="error-msg">Required</span></div>
+      </div>
+      <div class="field"><label>Billing address <span class="req">*</span></label><input type="text" data-crm="Address1Street1" autocomplete="address-line1" placeholder="First line of address" required><span class="error-msg">Required</span></div>
+      <div class="form-row">
+        <div class="field"><label>Town / City <span class="req">*</span></label><input type="text" data-crm="Address1City" autocomplete="address-level2" required><span class="error-msg">Required</span></div>
+        <div class="field"><label>Postcode <span class="req">*</span></label><input type="text" data-crm="Address1PostCode" autocomplete="postal-code" required><span class="error-msg">Required</span></div>
+      </div>
+      <div class="field"><label>Mobile phone number <span class="req">*</span></label><input type="tel" data-crm="MobilePhone" autocomplete="tel" placeholder="Include country code" required><span class="error-msg">Required</span></div>
+    </div>
+    <div class="section-heading" style="margin-top:28px;">Payment method</div>
+    <div class="pay-toggle">
+      <button class="${isDd ? 'active' : ''}" id="toggleDd">Direct Debit</button>
+      <button class="${isDd ? '' : 'active'}" id="toggleCc">Credit / Debit card</button>
+    </div>
+    <div class="form-grid">${payFields}</div>
+    <div class="btn-row"><button class="btn-back" id="backBtn">← Previous</button><button class="btn-primary" id="payBtn">Join &amp; pay</button></div>
+  </div>`;
+}
+
+
+function renderComplete() {
+  const sit = state.history.length && state.history[0].chosenIndex !== undefined
+    ? QUESTIONS.Q1.options[state.history[0].chosenIndex].label : "";
+  const isWorking = sit === "Working";
+  const isStudying = sit === "Studying";
+
+  let branch = "—"; let contractLocation = "—";
+  if (state.history.length >= 2) {
+    const locQ = state.history[1];
+    if (locQ.questionId === "Q2" || locQ.questionId === "Q3" || locQ.questionId === "Q4") {
+      const locOpt = QUESTIONS[locQ.questionId].options[locQ.chosenIndex];
+      if (locOpt) {
+        const lbl = locOpt.label;
+        if (lbl.includes("UK")) { branch = "United Kingdom"; contractLocation = "UK"; }
+        else if (lbl.includes("Netherlands")) { branch = "Netherlands"; contractLocation = "NL"; }
+        else if (lbl.includes("Switzerland")) { branch = "Switzerland"; contractLocation = "CH"; }
+        else { branch = "International"; contractLocation = "Other"; }
+      }
+    }
+  }
+
+  const memberNo = "0" + Math.floor(Math.random()*900+100) + "-" + Math.floor(Math.random()*9000+1000) + "-" + Math.floor(Math.random()*900000+100000);
+
+  // Profile form fields (contextual)
+  let profileFields = "";
+  if (isWorking) {
+    profileFields += `
+      <div class="field"><label>Employer</label><input type="text" data-crm="Employer" autocomplete="organization" placeholder="Your employer name"></div>
+      <div class="form-row">
+        <div class="field"><label>Ship</label><input type="text" data-crm="Ship" autocomplete="off" placeholder="Current vessel"></div>
+        <div class="field"><label>Rank</label><input type="text" data-crm="Rank" autocomplete="off" placeholder="Your rank"></div>
+      </div>`;
+  }
+  if (isStudying) {
+    profileFields += `
+      <div class="field"><label>Learning institution</label><input type="text" data-crm="LearningInstitution" autocomplete="organization" placeholder="Name of your college or training provider"></div>
+      <div class="form-row">
+        <div class="field"><label>Cadet start date</label><input type="date" data-crm="CadetStartDate"></div>
+        <div class="field"><label>Cadet end date</label><input type="date" data-crm="CadetEndDate"></div>
+      </div>`;
+  }
+  profileFields += `
+    <div class="form-row">
+      <div class="field"><label>Nationality</label><input type="text" data-crm="Nationality" autocomplete="off" placeholder="Your nationality"></div>
+      <div class="field"><label>Date of birth</label><input type="date" data-crm="Birthday" autocomplete="bday"></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Place of birth</label><input type="text" data-crm="PlaceOfBirth" autocomplete="off" placeholder="Town / city"></div>
+      <div class="field"><label>Gender</label><select data-crm="Gender" autocomplete="sex"><option value="">Select…</option><option>Male</option><option>Female</option><option>Non-binary</option><option>Prefer not to say</option></select></div>
+    </div>
+    <div class="field"><label>Salutation</label><select data-crm="Salutation"><option value="">Select…</option><option>Mr</option><option>Ms</option><option>Mrs</option><option>Mx</option><option>Captain</option><option>Commodore</option><option>Dr</option></select></div>
+    <div class="field"><label>Sector</label><select data-crm="Sector"><option value="">Select…</option><option>Merchant navy</option><option>Offshore</option><option>Yacht</option><option>Fishing</option><option>Ports &amp; harbours</option><option>Inland waterways</option><option>Pilotage</option><option>Other</option></select></div>`;
+
+  let prefFields = `
+    <div class="field"><label>How would you like us to contact you?</label><select data-crm="PreferredMethodofContact"><option value="">Select…</option><option>Any</option><option>Email</option><option>Phone</option><option>Post</option></select></div>
+    <div class="form-row">
+      <div class="field"><label>Send marketing material?</label><select data-crm="SendMarketingMaterial"><option value="">Select…</option><option value="true">Yes</option><option value="false">No</option></select></div>
+      <div class="field"><label>Third party marketing?</label><select data-crm="ThirdPartyMarketing"><option value="">Select…</option><option value="Subscribe">Yes</option><option value="Unsubscribe">No</option></select></div>
+    </div>`;
+
+  const firstName = state.formData.FirstName || "";
+  const lastName = state.formData.LastName || "";
+  const displayName = (firstName + " " + lastName).trim() || "New member";
+
+  return `
+  <div class="member-area">
+    <div class="member-header">
+      <h1>My Nautilus</h1>
+      <div class="member-tabs">
+        <span class="active">Overview</span><span>News</span><span>Campaigns &amp; Events</span>
+        <span>Courses</span><span>Resources</span><span>Jobs</span>
+        <span>Perks &amp; Benefits</span><span>Retirement</span><span>History</span><span>Sign out →</span>
+      </div>
+    </div>
+    <div class="member-body">
+      <div class="profile-card">
+        <div class="profile-avatar">👤</div>
+        <div class="profile-info">
+          <h3>${displayName}</h3>
+          <div class="role">${state.selectedOutcome || "New member"}</div>
+          <div class="employer" id="profileEmployerDisplay">${isWorking ? "Employer not yet set" : isStudying ? "Student" : "Retired"}</div>
+          <div class="member-no">Member No: ${memberNo}</div><br>
+          <div class="btn-settings">⚙ Account Settings</div>
+        </div>
+      </div>
+      <div class="quicklinks">
+        <h4>Quicklinks</h4>
+        <div class="quicklink-item"><span><span class="ql-icon">⚠</span> Emergency Support (Nautilus 24/7)</span><span class="ql-arrow">→</span></div>
+        <div class="quicklink-item"><span><span class="ql-icon">💬</span> Advice and resources</span><span class="ql-arrow">→</span></div>
+        <div class="quicklink-item"><span><span class="ql-icon">❓</span> General Enquiry</span><span class="ql-arrow">→</span></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <div class="section-heading">Complete your profile</div>
+      <p style="font-size:14px;color:var(--gray-600);margin-bottom:20px;">Help us tailor your membership experience. You can fill these in now or come back any time.</p>
+      <div class="form-grid" id="profileForm">${profileFields}</div>
+      <div class="section-heading" style="margin-top:28px;">Communication preferences</div>
+      <div class="form-grid">${prefFields}</div>
+    </div>
+  </div>
+
+  <div class="crm-panel" id="crmPanel" style="max-width:800px;margin:32px auto 0;">
+    <div class="crm-panel-header">
+      <span class="crm-badge">CRM</span>
+      <h4>Member record</h4>
+      <p>Below the line — not shown to user. Updates live as profile is completed.</p>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:24px;">
+    <button class="btn-restart" id="restartBtn">Restart demo</button>
+  </div>`;
+}
+
+// ─── LIVE CRM UPDATE ───
+function updateCrmPanel() {
+  const panel = document.getElementById("crmPanel");
+  if (!panel) return;
+
+  const sit = state.history.length && state.history[0].chosenIndex !== undefined
+    ? QUESTIONS.Q1.options[state.history[0].chosenIndex].label : "";
+  const isWorking = sit === "Working";
+  const isStudying = sit === "Studying";
+
+  let branch = ""; let contractLocation = "";
+  if (state.history.length >= 2) {
+    const locQ = state.history[1];
+    if (locQ.questionId === "Q2" || locQ.questionId === "Q3" || locQ.questionId === "Q4") {
+      const locOpt = QUESTIONS[locQ.questionId].options[locQ.chosenIndex];
+      if (locOpt) {
+        const lbl = locOpt.label;
+        if (lbl.includes("UK")) { branch = "United Kingdom"; contractLocation = "UK"; }
+        else if (lbl.includes("Netherlands")) { branch = "Netherlands"; contractLocation = "NL"; }
+        else if (lbl.includes("Switzerland")) { branch = "Switzerland"; contractLocation = "CH"; }
+        else { branch = "International"; contractLocation = "Other"; }
+      }
+    }
+  }
+
+  // Read a value: first check live form field, then saved formData
+  function v(key) {
+    const el = document.querySelector('[data-crm="' + key + '"]');
+    if (el && el.value.trim()) return el.value.trim();
+    return state.formData[key] || "";
+  }
+
+  // Update profile card employer
+  if (isWorking) {
+    const empDisplay = document.getElementById("profileEmployerDisplay");
+    if (empDisplay) empDisplay.textContent = v("Employer") || "Employer not yet set";
+  }
+
+  function f(key, val) {
+    const has = !!val;
+    return '<div class="crm-field"><span class="crm-key">' + key + '</span><span class="crm-val ' + (has ? '' : 'empty') + '">' + (has ? val : 'not set') + '</span></div>';
+  }
+
+  // Mask sensitive payment values
+  function mask(val, show) {
+    if (!val) return "";
+    if (val.length <= show) return val;
+    return "•".repeat(val.length - show) + val.slice(-show);
+  }
+
+  const personHtml = [
+    f("FirstName", v("FirstName")), f("MiddleName", v("MiddleName")), f("LastName", v("LastName")),
+    f("Birthday", v("Birthday")), f("PlaceOfBirth", v("PlaceOfBirth")),
+    f("Gender", v("Gender")), f("Nationality", v("Nationality")),
+    f("NationalityId", ""), f("Salutation", v("Salutation")),
+    f("MobilePhone", v("MobilePhone")), f("Email", ""),
+    f("Address1Street1", v("Address1Street1")), f("Address1Street2", ""),
+    f("Address1City", v("Address1City")), f("Address1County", ""),
+    f("Address1PostCode", v("Address1PostCode")), f("Address1CountryRegion", ""),
+  ].join("");
+
+  let memberArr = [
+    f("Branch", branch), f("Contract location", contractLocation),
+    f("ClassId", state.selectedOutcome || ""),
+    f("Employer", v("Employer")), f("EmployerId", ""),
+    f("Ship", v("Ship")), f("ShipId", ""),
+    f("Rank", v("Rank")), f("RankId", ""),
+    f("Sector", v("Sector")),
+  ];
+  if (isStudying) {
+    memberArr.push(f("CadetStartDate", v("CadetStartDate")));
+    memberArr.push(f("CadetEndDate", v("CadetEndDate")));
+  }
+  memberArr.push(f("DischargeBookNumber", ""), f("Functie", ""), f("Salary", ""));
+  const memberHtml = memberArr.join("");
+
+  const payMethod = state.formData._payMethod || state.payMethod;
+  const payLabel = payMethod === "dd" ? "ContinuousDirectDebit" : "ContinuousCreditDebitcard";
+  let payArr = [f("PaymentMethod", payLabel), f("PaymentFrequency", ""), f("BACSWeek", "")];
+  if (payMethod === "dd") {
+    payArr.push(f("Accountname", v("Accountname")));
+    payArr.push(f("Accountnumber", mask(state.formData.Accountnumber || "", 2)));
+    payArr.push(f("SortCode", mask(state.formData.SortCode || "", 2)));
+  }
+  payArr.push(f("IsEuropeSubscription", ""), f("TotalUnpaidAmountContinuous", ""));
+  const payHtml = payArr.join("");
+
+  const contactHtml = [
+    f("PreferredMethodofContact", v("PreferredMethodofContact")),
+    f("Telegraph", ""), f("SWZ", ""),
+    f("SendMarketingMaterial", v("SendMarketingMaterial")),
+    f("NautilusPlus", ""), f("ThirdPartyMarketing", v("ThirdPartyMarketing")),
+    f("ValidAccess", ""),
+  ].join("");
+
+  // Count populated vs total
+  const allCrmValues = [
+    v("FirstName"), v("MiddleName"), v("LastName"), v("Birthday"), v("PlaceOfBirth"),
+    v("Gender"), v("Nationality"), "", v("Salutation"), v("MobilePhone"), "",
+    v("Address1Street1"), "", v("Address1City"), "", v("Address1PostCode"), "",
+    branch, contractLocation, state.selectedOutcome || "",
+    v("Employer"), "", v("Ship"), "", v("Rank"), "", v("Sector"),
+  ];
+  if (isStudying) { allCrmValues.push(v("CadetStartDate"), v("CadetEndDate")); }
+  allCrmValues.push("","","", payLabel, "", "");
+  if (payMethod === "dd") { allCrmValues.push(v("Accountname"), state.formData.Accountnumber||"", state.formData.SortCode||""); }
+  allCrmValues.push("","", v("PreferredMethodofContact"), "","", v("SendMarketingMaterial"), "", v("ThirdPartyMarketing"), "");
+  const populated = allCrmValues.filter(function(x){ return !!x; }).length;
+  const total = allCrmValues.length;
+
+  panel.innerHTML =
+    '<div class="crm-panel-header"><span class="crm-badge">CRM</span><h4>Member record</h4><p>Below the line — not shown to user&ensp;·&ensp;' + populated + ' / ' + total + ' fields populated</p></div>' +
+    '<div class="crm-section-label">Person</div><div class="crm-grid">' + personHtml + '</div>' +
+    '<div class="crm-section-label">Membership &amp; Employment</div><div class="crm-grid">' + memberHtml + '</div>' +
+    '<div class="crm-section-label">Payment</div><div class="crm-grid">' + payHtml + '</div>' +
+    '<div class="crm-section-label">Contact &amp; Preferences</div><div class="crm-grid">' + contactHtml + '</div>';
+}
+
+
+function bindEvents() {
+  document.querySelectorAll(".option-btn[data-idx]").forEach(b =>
+    b.addEventListener("click", () => handleChoice(parseInt(b.dataset.idx))));
+  document.querySelectorAll(".option-btn[data-fieldset]").forEach(b =>
+    b.addEventListener("click", () => handleFieldsetChoice(parseInt(b.dataset.fieldset), parseInt(b.dataset.opt))));
+  const back = document.getElementById("backBtn");
+  if (back) back.addEventListener("click", goBack);
+  const pay = document.getElementById("payBtn");
+  if (pay) pay.addEventListener("click", () => {
+    // Clear previous errors
+    document.querySelectorAll(".field.has-error").forEach(f => f.classList.remove("has-error"));
+    // Validate required fields
+    let valid = true;
+    document.querySelectorAll("[required]").forEach(el => {
+      if (!el.value.trim()) {
+        el.closest(".field").classList.add("has-error");
+        valid = false;
+      }
+    });
+    if (!valid) {
+      const first = document.querySelector(".field.has-error input, .field.has-error select");
+      if (first) first.focus();
+      return;
+    }
+    // Save all data-crm values from payment form
+    document.querySelectorAll("[data-crm]").forEach(el => {
+      if (el.value.trim()) state.formData[el.getAttribute("data-crm")] = el.value.trim();
+    });
+    state.formData._payMethod = state.payMethod;
+    state.phase = "complete"; render();
+  });
+  const dd = document.getElementById("toggleDd");
+  if (dd) dd.addEventListener("click", () => {
+    document.querySelectorAll("[data-crm]").forEach(el => { if (el.value.trim()) state.formData[el.getAttribute("data-crm")] = el.value.trim(); });
+    state.payMethod = "dd"; render();
+  });
+  const cc = document.getElementById("toggleCc");
+  if (cc) cc.addEventListener("click", () => {
+    document.querySelectorAll("[data-crm]").forEach(el => { if (el.value.trim()) state.formData[el.getAttribute("data-crm")] = el.value.trim(); });
+    state.payMethod = "cc"; render();
+  });
+  const re = document.getElementById("restartBtn");
+  if (re) re.addEventListener("click", () => {
+    state = { history:[], currentQ:"Q1", selectedOutcome:null, unclearOutcome:null, phase:"questions", payMethod:"dd", formData:{} };
+    render();
+  });
+  // Live CRM updates on member profile page
+  document.querySelectorAll("[data-crm]").forEach(el => {
+    el.addEventListener("input", updateCrmPanel);
+    el.addEventListener("change", updateCrmPanel);
+  });
+  // Restore saved form data into fields
+  document.querySelectorAll("[data-crm]").forEach(el => {
+    const key = el.getAttribute("data-crm");
+    if (state.formData[key] && !el.value) el.value = state.formData[key];
+  });
+  // Clear error on input
+  document.querySelectorAll("[required]").forEach(el => {
+    el.addEventListener("input", () => el.closest(".field").classList.remove("has-error"));
+  });
+  // Initial CRM render
+  if (state.phase === "complete") updateCrmPanel();
+}
+
+function handleChoice(idx) {
+  const opt = QUESTIONS[state.currentQ].options[idx];
+  state.history.push({ questionId: state.currentQ, chosenIndex: idx });
+  resolveOption(opt);
+}
+
+function handleFieldsetChoice(fi, oi) {
+  const opt = QUESTIONS[state.currentQ].fieldsets[fi].options[oi];
+  state.history.push({ questionId: state.currentQ, fieldsetIdx: fi, optionIdx: oi });
+  resolveOption(opt);
+}
+
+function resolveOption(opt) {
+  if (opt.outcome) { state.selectedOutcome = opt.outcome; state.phase = "payment"; render(); }
+  else if (opt.unclear) { state.unclearOutcome = opt.note || "Please contact the membership team."; state.phase = "unclear"; render(); }
+  else if (opt.routesTo) { state.currentQ = opt.routesTo; render(); }
+}
+
+function goBack() {
+  if (state.phase === "payment" || state.phase === "unclear") {
+    state.phase = "questions"; state.selectedOutcome = null; state.unclearOutcome = null;
+    const last = state.history.pop(); if (last) state.currentQ = last.questionId;
+    render(); return;
+  }
+  if (state.history.length) { const last = state.history.pop(); state.currentQ = last.questionId; render(); }
+}
+
+render();
+</script>
+</body>
+</html>

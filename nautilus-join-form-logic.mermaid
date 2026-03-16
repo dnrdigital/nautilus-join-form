@@ -1,0 +1,99 @@
+graph TD
+    START([Start]) --> Q1
+
+    Q1{What is your<br>current situation?}
+    Q1 -->|I'm employed| Q2
+    Q1 -->|I'm a student| Q3
+    Q1 -->|I'm retired| Q4
+
+    %% === WORKING: EMPLOYER LOCATION ===
+    Q2{My employer<br>is based…}
+    Q2 -->|United Kingdom| Q5
+    Q2 -->|Netherlands| Q6
+    Q2 -->|Switzerland| Q7
+    Q2 -->|Another country| Q8
+    Q2 -->|I'm not sure| Q8
+
+    %% === STUDYING: INSTITUTION LOCATION ===
+    Q3{My learning institution<br>is based…}
+    Q3 -->|United Kingdom| C1([UK C1 membership])
+    Q3 -->|Netherlands| CAT4([NL Category 4])
+    Q3 -->|Switzerland<br>— I am an apprentice| CH_APP([CH Apprentice fee])
+    Q3 -->|Another country| UNCLEAR_STUDY([Contact membership<br>team])
+
+    %% === RETIRED: LAST EMPLOYER LOCATION ===
+    Q4{My last employer<br>was based…}
+    Q4 -->|United Kingdom| UK_RET([UK Retired<br>membership])
+    Q4 -->|Netherlands| CAT3([NL Category 3])
+    Q4 -->|Switzerland| CH_PEN([CH Pensioner /<br>unemployed fee])
+    Q4 -->|Another country| UNCLEAR_RET([Contact membership<br>team])
+    Q4 -->|I'm not sure| UNCLEAR_RET
+
+    %% === UK: SEA OR ASHORE ===
+    Q5{Do you work<br>at sea or ashore?}
+    Q5 -->|At sea| Q8
+    Q5 -->|Ashore| Q9
+
+    %% === NL: AGE ===
+    Q6{Select the membership<br>that applies to you:}
+    Q6 -->|23 years old<br>or older| CAT1([NL Category 1])
+    Q6 -->|22 years old<br>or younger| CAT2([NL Category 2])
+
+    %% === CH: SALARY ===
+    Q7{Select the membership<br>that applies to you:}
+    Q7 -->|Salary over<br>CHF 2,500/month| CH_NORM([CH Normal fee])
+    Q7 -->|Salary under<br>CHF 2,500/month| UNCLEAR_CH([Contact membership<br>team — possible<br>reduction])
+
+    %% === WORKING AT SEA: ROLE SELECTION ===
+    Q8{Select the membership<br>that applies to you:}
+
+    %% Maritime membership
+    Q8 -->|Seagoing officer<br>— certified| F1([UK F1 membership])
+    Q8 -->|Seagoing officer<br>— uncertified| P1_SEA([UK P1 membership])
+    Q8 -->|Marine rating| R1([UK R1 membership])
+
+    %% Yacht sector
+    Q8 -->|Yacht officer| Y1([UK Y1 membership])
+    Q8 -->|Yacht crew| Y2([UK Y2 membership])
+
+    %% Other
+    Q8 -->|None of these<br>apply| UNCLEAR_SEA([Contact membership<br>team])
+
+    %% === WORKING ASHORE UK: ROLE SELECTION ===
+    Q9{Select the membership<br>that applies to you:}
+    Q9 -->|Pilot, Harbourmaster,<br>DPA or regulated role| P1([UK P1 membership])
+    Q9 -->|Other shore-side role| S1([UK S1 membership])
+    Q9 -->|Less than 30 hours<br>shore-side| UNCLEAR_SHORE([Contact membership<br>team — possible<br>reduction])
+
+    %% === POST-OUTCOME FLOWS ===
+    C1 --> PAY([Payment form])
+    CAT1 --> PAY
+    CAT2 --> PAY
+    CAT3 --> PAY
+    CAT4 --> PAY
+    CH_APP --> PAY
+    CH_PEN --> PAY
+    CH_NORM --> PAY
+    F1 --> PAY
+    P1 --> PAY
+    P1_SEA --> PAY
+    R1 --> PAY
+    Y1 --> PAY
+    Y2 --> PAY
+    S1 --> PAY
+    UK_RET --> PAY
+
+    PAY --> PROFILE([My Nautilus<br>member profile])
+
+    %% === STYLING ===
+    classDef question fill:#e9f2fa,stroke:#003764,stroke-width:2px,color:#003764
+    classDef outcome fill:#e0f4f4,stroke:#00838f,color:#003764,stroke-width:2px
+    classDef unclear fill:#fff4ec,stroke:#e87722,color:#003764,stroke-width:2px
+    classDef startend fill:#003764,stroke:#002244,color:#ffffff,stroke-width:2px
+    classDef action fill:#ffffff,stroke:#003764,color:#003764,stroke-width:2px
+
+    class Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9 question
+    class C1,CAT1,CAT2,CAT3,CAT4,CH_APP,CH_PEN,CH_NORM,F1,P1,P1_SEA,R1,Y1,Y2,S1,UK_RET outcome
+    class UNCLEAR_STUDY,UNCLEAR_RET,UNCLEAR_CH,UNCLEAR_SEA,UNCLEAR_SHORE unclear
+    class START startend
+    class PAY,PROFILE action
