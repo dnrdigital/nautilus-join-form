@@ -444,8 +444,6 @@
 
 <script>
 // ─── DATA MODEL — language taken directly from Duncan's spreadsheet ───
-// ─── UPDATES: custom messaging - financials, with any branch specific stuff - eg Swiss - apply for lower rate ───
-// ─── UPDATES: custom fields - personal details / branch specific eg Swiss check lower application, everyone has own rules and 'i agree to the rules' ───
 // ─── UK: checkbox for reduced hours / possible:document upload ───
 // ─── DUTCH: Consent for marketing communications ───
 // ─── EVERYONE: frequency of payments (check back with SWISS) ───
@@ -469,7 +467,7 @@ const QUESTIONS = {
       { label: "In the Netherlands", breadcrumb: "Netherlands", routesTo: "Q5" },
       { label: "In Switzerland", breadcrumb: "Switzerland", outcome: "CH Employed member union fee" },
       { label: "In another country", breadcrumb: "Other country", routesTo: "Q6" },
-      { label: "I'm not sure", breadcrumb: "Not sure", routesTo: "Q6" },
+      { label: "I'm not sure", breadcrumb: "Not sure where employer is based", outcome: "UK F1 membership for review" },
     ],
     openQuestions: ["'In another country' and 'I'm not sure' both currently lead to the UK sea-role questions (Q6). Should either or both have their own unique pathways? Should they be combined into a single option?"]
   },
@@ -522,7 +520,7 @@ const QUESTIONS = {
       {
         legend: "Other",
         options: [
-          { label: "None of these apply", outcome: "UK F1 membership" },
+          { label: "None of these apply", outcome: "UK F1 membership for review" },
         ]
       }
     ],
@@ -534,13 +532,13 @@ const QUESTIONS = {
       { label: "Pilot, Harbourmaster, DPA or in a regulated role", breadcrumb: "Pilot / Harbourmaster / DPA", outcome: "UK P1 membership" },
       { label: "Other shore side role", breadcrumb: "Other Shore side", outcome: "UK S1 membership" },
       { label: "I work less than 30 hours in a shore side role", breadcrumb: "Part-time shore side", outcome: "UK K1 membership" },
-    ],
-    openQuestions: ["Under 30 hours — does this need evidence, or can it be handled online without verification?"]
-  }
+    ]
+  },
 };
 
 const MEMBERSHIP_INFO = {
   "UK F1 membership": { branch: "United Kingdom", name: "Seagoing officer", monthly: { dd: "£29.40", card: "£31.80" }, annual: null },
+  "UK F1 membership for review": { branch: "United Kingdom", name: "Maritime", monthly: { dd: "£29.40", card: "£31.80" }, annual: null },
   "UK P1 membership": { branch: "United Kingdom", name: "Pilot, Harbourmaster or DPA", monthly: { dd: "£23.25", card: "£25.25" }, annual: null },
   "UK R1 membership": { branch: "United Kingdom", name: "Marine rating", monthly: { dd: "£21.60", card: "£23.00" }, annual: null },
   "UK S1 membership": { branch: "United Kingdom", name: "Employed shore side and trawler officer", monthly: { dd: "£23.25", card: "£25.25" }, annual: null },
@@ -670,6 +668,12 @@ function getCountryFromHistory() {
   return "UK"; // default
 }
 
+const TERMS_URLS = {
+  UK: { label: "United Kingdom", url: "https://www.nautilusint.org/en/uk-terms-and-conditions/" },
+  NL: { label: "Netherlands", url: "https://www.nautilusint.org/en/nl-terms-and-conditions/" },
+  CH: { label: "Switzerland", url: "https://www.nautilusint.org/en/ch-terms-and-conditions/" },
+};
+
 function getPaymentTabsForCountry(country) {
   if (country === "UK") return [{ key: "dd", label: "Direct Debit" }, { key: "cc", label: "Credit / Debit card" }];
   if (country === "NL") return [{ key: "dd", label: "Direct Debit" }, { key: "cc", label: "Credit / Debit card" }, { key: "bt", label: "Bank Transfer" }];
@@ -794,6 +798,7 @@ function renderPayment() {
     <div class="form-grid">${payFields}
       <div class="field"><label>Referral code</label><input type="text" data-crm="ReferralCode" autocomplete="off" placeholder="If you have one"></div>
     </div>
+    <div class="field" style="margin-top:16px;"><label style="display:flex;align-items:flex-start;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" id="termsCheck" required style="width:auto;margin-top:3px;"> I agree to the <a href="${(TERMS_URLS[country] || TERMS_URLS.UK).url}" target="_blank" style="color:var(--nautilus-blue);">terms and conditions of ${(TERMS_URLS[country] || TERMS_URLS.UK).label} membership</a> <span class="req">*</span></label><span class="error-msg">You must accept the terms to continue</span></div>
     <div class="btn-row"><button class="btn-back" id="backBtn">← Previous</button><button class="btn-primary" id="payBtn">Join &amp; pay</button></div>
   </div>`;
 }
@@ -1049,7 +1054,8 @@ function bindEvents() {
     document.querySelectorAll(".field.has-error").forEach(f => f.classList.remove("has-error"));
     let valid = true;
     document.querySelectorAll("[required]").forEach(el => {
-      if (!el.value.trim()) {
+      const empty = el.type === "checkbox" ? !el.checked : !el.value.trim();
+      if (empty) {
         el.closest(".field").classList.add("has-error");
         valid = false;
       }
@@ -1098,7 +1104,8 @@ function bindEvents() {
   });
   // Clear error on input
   document.querySelectorAll("[required]").forEach(el => {
-    el.addEventListener("input", () => el.closest(".field").classList.remove("has-error"));
+    const evt = el.type === "checkbox" ? "change" : "input";
+    el.addEventListener(evt, () => el.closest(".field").classList.remove("has-error"));
   });
   // Initial CRM render
   if (state.phase === "complete") updateCrmPanel();
