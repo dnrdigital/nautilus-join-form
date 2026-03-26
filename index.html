@@ -444,10 +444,6 @@
 
 <script>
 // ─── DATA MODEL — language taken directly from Duncan's spreadsheet ───
-// ─── UK: checkbox for reduced hours / possible:document upload ───
-// ─── DUTCH: Consent for marketing communications ───
-// ─── EVERYONE: frequency of payments (check back with SWISS) ───
-// ─── UPDATES: new custom message at end - under review ───
 const QUESTIONS = {
   Q1: {
     flow: null,
@@ -469,7 +465,6 @@ const QUESTIONS = {
       { label: "In another country", breadcrumb: "Other country", routesTo: "Q6" },
       { label: "I'm not sure", breadcrumb: "Not sure where employer is based", outcome: "UK F1 membership for review" },
     ],
-    openQuestions: ["'In another country' and 'I'm not sure' both currently lead to the UK sea-role questions (Q6). Should either or both have their own unique pathways? Should they be combined into a single option?"]
   },
   Q3: {
     flow: "Studying",
@@ -508,7 +503,8 @@ const QUESTIONS = {
           { label: "Seagoing officer — uncertificated", breadcrumb: "Seagoing Officer (uncert.)", outcome: "UK F1 membership" },
           { label: "Pilot", breadcrumb: "Pilot", outcome: "UK P1 membership" },
           { label: "Marine rating", breadcrumb: "Marine Rating", outcome: "UK R1 membership" },
-        ]
+        ],
+        openQuestions: ["Both 'certificated' and 'uncertificated' options go to UK F1 membership. Is this correct? Can we combine them?"]
       },
       {
         legend: "Yacht sector",
