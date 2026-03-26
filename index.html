@@ -746,11 +746,11 @@ function renderPayment() {
         <div class="field"><label>Your employer</label><input type="text" data-crm="Employer" autocomplete="organization" placeholder="Employer name"></div>
         <div class="field"><label>Your rank</label><input type="text" data-crm="Rank" autocomplete="off" placeholder="Your rank"></div>
       </div>
-      <div class="field" style="margin-top:8px;"><label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;"><input type="checkbox" id="reducedRateCheck" style="width:auto;"> Apply for reduced rate</label></div>
+      ${country === "UK" || country === "CH" ? `<div class="field" style="margin-top:8px;"><label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;"><input type="checkbox" id="reducedRateCheck" style="width:auto;"> Apply for reduced rate</label></div>
       <div id="reducedRateFields" style="display:none;">
         <div class="field" style="margin-top:12px;"><label>Supporting document</label><input type="file" data-crm="ReducedRateDoc" style="padding:8px 0;"></div>
         <div class="field"><label>Additional information</label><textarea data-crm="ReducedRateNotes" rows="3" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-family:inherit;font-size:15px;color:var(--gray-800);resize:vertical;" placeholder="Please provide any details to support your application"></textarea></div>
-      </div>
+      </div>` : ``}
     </div>
     <div class="section-heading" style="margin-top:28px;">Payment method</div>
     <div class="pay-toggle">${toggleHtml}</div>
