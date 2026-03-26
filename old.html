@@ -472,13 +472,13 @@ const QUESTIONS = {
     flow: "Working",
     question: "My employer is based…",
     options: [
-      { label: "In the UK", routesTo: "Q4" },
-      { label: "In the Netherlands", routesTo: "Q5" },
+      { label: "In the UK", routesTo: "Q5" },
+      { label: "In the Netherlands", routesTo: "Q6" },
       { label: "In Switzerland", outcome: "CH Employed member union fee" },
-      { label: "In another country", routesTo: "Q6" },
-      { label: "I'm not sure", routesTo: "Q6" },
+      { label: "In another country", routesTo: "Q8" },
+      { label: "I'm not sure", routesTo: "Q8" },
     ],
-    openQuestions: ["'In another country' and 'I'm not sure' both currently lead to the UK sea-role questions (Q6). Should either or both have their own unique pathways? Should they be combined into a single option?"]
+    openQuestions: ["'In another country' and 'I'm not sure' both currently lead to the UK sea-role questions (Q8). Should either or both have their own unique pathways? Should they be combined into a single option?"]
   },
   Q3: {
     flow: "Studying",
@@ -491,15 +491,15 @@ const QUESTIONS = {
     openQuestions: ["Need clarity: third option should be clear that the employment by a swiss company is the key factor, they could be learning abroad"]
 
   },
-  Q4: {
+  Q5: {
     flow: "Working for a UK employer",
     question: "Do you work…",
     options: [
-      { label: "At sea", routesTo: "Q6" },
-      { label: "Ashore", routesTo: "Q7" },
+      { label: "At sea", routesTo: "Q8" },
+      { label: "Ashore", routesTo: "Q9" },
     ]
   },
-  Q5: {
+  Q6: {
     flow: "Working for a Dutch employer",
     question: "Select the membership that applies to you:",
     options: [
@@ -507,7 +507,7 @@ const QUESTIONS = {
       { label: "I am 22 years old or younger", outcome: "NL 22 Years and Younger" },
     ]
   },
-  Q6: {
+  Q8: {
     flow: "Working at sea",
     question: "Select the membership that applies to you:",
     useFieldsets: true,
@@ -517,7 +517,7 @@ const QUESTIONS = {
         options: [
           { label: "Seagoing officer — certificated", note: "I have a valid management or operational CoC", outcome: "UK F1 membership" },
           { label: "Seagoing officer — uncertificated", note: "I am an uncertificated officer working onboard ships", outcome: "UK P1 membership" },
-          { label: "Pilot", outcome: "UK P1 membership" },
+          { label: "Pilot", outcome: "UK R1 membership" },
           { label: "Marine rating", outcome: "UK R1 membership" },
         ]
       },
@@ -536,7 +536,7 @@ const QUESTIONS = {
       }
     ],
   },
-  Q7: {
+  Q9: {
     flow: "Working onshore in the UK",
     question: "Select the membership that applies to you:",
     options: [
@@ -548,30 +548,13 @@ const QUESTIONS = {
   }
 };
 
-const MEMBERSHIP_INFO = {
-  "UK F1 membership": { branch: "United Kingdom", name: "Seagoing officer (certificated)", monthly: { dd: "£29.40", card: "£31.80" }, annual: null },
-  "UK P1 membership": { branch: "United Kingdom", name: "Professional member", monthly: { dd: "£23.25", card: "£25.25" }, annual: null },
-  "UK R1 membership": { branch: "United Kingdom", name: "Marine rating / Pilot", monthly: { dd: "£21.60", card: "£23.00" }, annual: null },
-  "UK S1 membership": { branch: "United Kingdom", name: "Shore staff member", monthly: { dd: "£23.25", card: "£25.25" }, annual: null },
-  "UK Y1 membership": { branch: "United Kingdom", name: "Yacht officer", monthly: null, annual: "€405.00" },
-  "UK Y2 membership": { branch: "United Kingdom", name: "Yacht crew", monthly: null, annual: "€275.00" },
-  "UK C1 membership": { branch: "United Kingdom", name: "Cadet / Student / Trainee", monthly: null, annual: "£36.00" },
-  "NL 23 Years and Older": { branch: "Netherlands", name: "Member (23 years and older)", monthly: null, annual: null, tbc: true },
-  "NL 22 Years and Younger": { branch: "Netherlands", name: "Member (22 years and younger)", monthly: null, annual: null, tbc: true },
-  "NL Student membership": { branch: "Netherlands", name: "Student member", monthly: null, annual: null, tbc: true },
-  "CH Employed member union fee": { branch: "Switzerland", name: "Employed member union fee", monthly: null, annual: null, tbc: true },
-  "CH Apprentice fee": { branch: "Switzerland", name: "Apprentice fee", monthly: null, annual: null, tbc: true },
-};
-
-const STEP_NAMES = ["Your situation", "Contact details", "Personal details", "Payment"];
+const STEP_NAMES = ["Your situation", "Payment", "Confirmation"];
 
 let state = { history: [], currentQ: "Q1", selectedOutcome: null, unclearOutcome: null, phase: "questions", payMethod: null, formData: {} };
 
 function getStepIndex() {
-  if (state.phase === "complete") return 3;
-  if (state.phase === "payment") return 3;
-  if (state.phase === "personal") return 2;
-  if (state.phase === "contact") return 1;
+  if (state.phase === "complete") return 2;
+  if (state.phase === "payment") return 1;
   if (state.phase === "unclear") return 1;
   return 0;
 }
@@ -594,8 +577,6 @@ function render() {
   document.getElementById("stepBar").parentElement.style.display = state.phase === "complete" ? "none" : "";
   if (state.phase === "questions") app.innerHTML = renderQuestion();
   else if (state.phase === "unclear") app.innerHTML = renderUnclear();
-  else if (state.phase === "contact") app.innerHTML = renderContact();
-  else if (state.phase === "personal") app.innerHTML = renderPersonal();
   else if (state.phase === "payment") app.innerHTML = renderPayment();
   else app.innerHTML = renderComplete();
   bindEvents();
@@ -681,123 +662,67 @@ function getPaymentTabsForCountry(country) {
   return [{ key: "dd", label: "Direct Debit" }, { key: "cc", label: "Credit / Debit card" }];
 }
 
-const COUNTRY_OPTIONS = ["Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia","Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo","Costa Rica","Croatia","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar","Romania","Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"];
-const COUNTRY_OPTIONS_HTML = '<option value="">Select…</option>' + COUNTRY_OPTIONS.map(c => `<option>${c}</option>`).join("");
-
-function getOutcomeHtml() {
-  if (!state.selectedOutcome) return "";
-  const info = MEMBERSHIP_INFO[state.selectedOutcome];
-  if (!info) return `<div class="outcome-card"><div class="badge">Your membership</div><h3>${state.selectedOutcome}</h3></div>`;
-  let costHtml = "";
-  if (info.tbc) {
-    costHtml = `<span style="color:var(--gray-600);font-size:14px;">Fees to be confirmed by your branch.</span>`;
-  } else if (info.annual && !info.monthly) {
-    costHtml = `<span style="font-size:22px;font-weight:700;color:var(--nautilus-navy);">${info.annual}</span> <span style="font-size:14px;color:var(--gray-600);">per year</span>`;
-  } else if (info.monthly) {
-    costHtml = `<span style="font-size:22px;font-weight:700;color:var(--nautilus-navy);">${info.monthly.dd}</span> <span style="font-size:14px;color:var(--gray-600);">per month (Direct Debit)</span><br><span style="font-size:22px;font-weight:700;color:var(--nautilus-navy);">${info.monthly.card}</span> <span style="font-size:14px;color:var(--gray-600);">per month (Card)</span>`;
-  }
-  return `<div class="outcome-card"><div class="badge">${info.branch} branch</div><h3>Your membership</h3><p style="font-size:15px;color:var(--gray-600);margin-bottom:8px;">${info.name}</p><p>${costHtml}</p></div>`;
-}
-
-function getBcHtml() {
+function renderPayment() {
   const crumbs = getBreadcrumbs();
-  return `<div class="breadcrumbs">${crumbs.map((c,i) =>
+  let bc = `<div class="breadcrumbs">${crumbs.map((c,i) =>
     `<span class="bc-answer">${c.answer}</span>${i<crumbs.length-1?'<span class="bc-sep">›</span>':''}`
   ).join("")}</div>`;
-}
 
-function renderContact() {
-  return `<div class="card">${getBcHtml()}${getOutcomeHtml()}
-    <div class="section-heading">Contact details</div>
-    <div class="form-grid">
-      <div class="form-row">
-        <div class="field"><label>First name <span class="req">*</span></label><input type="text" name="given-name" data-crm="FirstName" autocomplete="given-name" required><span class="error-msg">Required</span></div>
-        <div class="field"><label>Middle name</label><input type="text" name="additional-name" data-crm="MiddleName" autocomplete="additional-name"></div>
-        <div class="field"><label>Last name <span class="req">*</span></label><input type="text" name="family-name" data-crm="LastName" autocomplete="family-name" required><span class="error-msg">Required</span></div>
-      </div>
-      <div class="field"><label>Address <span class="req">*</span></label><input type="text" name="address-line1" data-crm="Address1Street1" autocomplete="address-line1" placeholder="First line of address" required><span class="error-msg">Required</span></div>
-      <div class="field"><label>Second line</label><input type="text" name="address-line2" data-crm="Address1Street2" autocomplete="address-line2" placeholder="Apartment, suite, etc."></div>
-      <div class="form-row">
-        <div class="field"><label>Town / City <span class="req">*</span></label><input type="text" name="address-level2" data-crm="Address1City" autocomplete="address-level2" required><span class="error-msg">Required</span></div>
-        <div class="field"><label>State / Province</label><input type="text" name="address-level1" data-crm="Address1County" autocomplete="address-level1"></div>
-      </div>
-      <div class="form-row">
-        <div class="field"><label>Postal code <span class="req">*</span></label><input type="text" name="postal-code" data-crm="Address1PostCode" autocomplete="postal-code" required><span class="error-msg">Required</span></div>
-        <div class="field"><label>Country <span class="req">*</span></label><select name="country-name" data-crm="Address1CountryRegion" autocomplete="country-name" required>${COUNTRY_OPTIONS_HTML}</select><span class="error-msg">Required</span></div>
-      </div>
-      <div class="form-row">
-        <div class="field"><label>Phone number <span class="req">*</span></label><input type="tel" name="tel" data-crm="MobilePhone" autocomplete="tel" placeholder="Include country code" required><span class="error-msg">Required</span></div>
-        <div class="field"><label>Email address <span class="req">*</span></label><input type="email" name="email" data-crm="Email" autocomplete="email" placeholder="you@example.com" required><span class="error-msg">Required</span></div>
-      </div>
-    </div>
-    <div class="btn-row"><button class="btn-back" id="backBtn">← Previous</button><button class="btn-primary" id="nextBtn">Continue</button></div>
-  </div>`;
-}
+  let outcomeHtml = "";
+  if (state.selectedOutcome) {
+    outcomeHtml = `<div class="outcome-card"><div class="badge">Your membership</div><h3>${state.selectedOutcome}</h3><p>Your annual fee is XXX Your monthly fee is XXX.</p></div>`;
+  }
 
-function renderPersonal() {
-  const country = getCountryFromHistory();
-  return `<div class="card">${getBcHtml()}${getOutcomeHtml()}
-    <div class="section-heading">Personal details</div>
-    <div class="form-grid">
-      <div class="field"><label>I live in / I'm a resident of… <span class="req">*</span></label><select data-crm="ResidentCountry" required>${COUNTRY_OPTIONS_HTML}</select><span class="error-msg">Required</span></div>
-      <div class="form-row">
-        <div class="field"><label>Your employer</label><input type="text" data-crm="Employer" autocomplete="organization" placeholder="Employer name"></div>
-        <div class="field"><label>Your rank</label><input type="text" data-crm="Rank" autocomplete="off" placeholder="Your rank"></div>
-      </div>
-      ${country === "UK" || country === "CH" ? `<div class="field" style="margin-top:8px;"><label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;"><input type="checkbox" id="reducedRateCheck" style="width:auto;"> Apply for reduced rate</label></div>
-      <div id="reducedRateFields" style="display:none;">
-        <div class="field" style="margin-top:12px;"><label>Supporting document</label><input type="file" data-crm="ReducedRateDoc" style="padding:8px 0;"></div>
-        <div class="field"><label>Additional information</label><textarea data-crm="ReducedRateNotes" rows="3" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-family:inherit;font-size:15px;color:var(--gray-800);resize:vertical;" placeholder="Please provide any details to support your application"></textarea></div>
-      </div>` : ``}
-    </div>
-    <div class="btn-row"><button class="btn-back" id="backBtn">← Previous</button><button class="btn-primary" id="nextBtn">Continue</button></div>
-  </div>`;
-}
-
-function renderPayment() {
   const country = getCountryFromHistory();
   const tabs = getPaymentTabsForCountry(country);
 
+  // Default to first available tab if current method not available for this country
   if (!state.payMethod || !tabs.find(t => t.key === state.payMethod)) {
     state.payMethod = tabs[0].key;
   }
 
   let payFields = "";
   if (state.payMethod === "dd") {
-    payFields = `<div class="field"><label>Account holder name <span class="req">*</span></label><input type="text" data-crm="Accountname" autocomplete="off" required><span class="error-msg">Required</span></div>
-      <div class="form-row">
-        <div class="field"><label>Account number <span class="req">*</span></label><input type="text" data-crm="Accountnumber" autocomplete="off" placeholder="8-digit account number" required><span class="error-msg">Required</span></div>
+    payFields = `<div class="form-row">
         <div class="field"><label>Sort code <span class="req">*</span></label><input type="text" data-crm="SortCode" autocomplete="off" placeholder="00-00-00" required><span class="error-msg">Required</span></div>
+        <div class="field"><label>Account number <span class="req">*</span></label><input type="text" data-crm="Accountnumber" autocomplete="off" required><span class="error-msg">Required</span></div>
       </div>
-      <div class="field" style="margin-top:8px;"><label style="display:flex;align-items:flex-start;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" id="ddMandate" required style="width:auto;margin-top:3px;"> I authorise Nautilus International to collect payments from my account under the Direct Debit Guarantee. <span class="req">*</span></label><span class="error-msg">You must agree to continue</span></div>`;
+      <div class="field"><label>Account holder name <span class="req">*</span></label><input type="text" data-crm="Accountname" autocomplete="cc-name" required><span class="error-msg">Required</span></div>`;
   } else if (state.payMethod === "cc") {
-    payFields = `<div class="field"><label>Name on card <span class="req">*</span></label><input type="text" name="cc-name" data-crm="Accountname" autocomplete="cc-name" required><span class="error-msg">Required</span></div>
-      <div class="field"><label>Card number <span class="req">*</span></label><input type="text" name="cc-number" data-crm="CardNumber" autocomplete="cc-number" placeholder="0000 0000 0000 0000" required><span class="error-msg">Required</span></div>
+    payFields = `<div class="field"><label>Card number <span class="req">*</span></label><input type="text" data-crm="CardNumber" autocomplete="cc-number" placeholder="0000 0000 0000 0000" required><span class="error-msg">Required</span></div>
       <div class="form-row">
-        <div class="field"><label>Expiry date <span class="req">*</span></label><input type="text" name="cc-exp" data-crm="CardExpiry" autocomplete="cc-exp" placeholder="MM / YY" required><span class="error-msg">Required</span></div>
-        <div class="field"><label>Security code (CVV) <span class="req">*</span></label><input type="text" name="cc-csc" data-crm="CardCVV" autocomplete="cc-csc" placeholder="000" required><span class="error-msg">Required</span></div>
-      </div>`;
-  } else if (state.payMethod === "bt") {
-    payFields = `<div class="field"><label>Account holder name <span class="req">*</span></label><input type="text" data-crm="Accountname" autocomplete="off" required><span class="error-msg">Required</span></div>
-      <div class="form-row">
-        <div class="field"><label>Sort code</label><input type="text" data-crm="BT_SortCode" autocomplete="off" placeholder="00-00-00"></div>
-        <div class="field"><label>Account number</label><input type="text" data-crm="BT_Accountnumber" autocomplete="off" placeholder="8-digit number"></div>
+        <div class="field"><label>Expiry date <span class="req">*</span></label><input type="text" data-crm="CardExpiry" autocomplete="cc-exp" placeholder="MM / YY" required><span class="error-msg">Required</span></div>
+        <div class="field"><label>CVV <span class="req">*</span></label><input type="text" data-crm="CardCVV" autocomplete="cc-csc" placeholder="000" required><span class="error-msg">Required</span></div>
       </div>
-      <div class="field"><label>IBAN</label><input type="text" data-crm="IBAN" autocomplete="off" placeholder="e.g. CH93 0076 2011 6238 5295 7"></div>
-      <div class="field"><label>BIC / SWIFT</label><input type="text" data-crm="BIC" autocomplete="off" placeholder="e.g. UBSWCHZH80A"></div>
-      <div class="field"><label>Payment reference <span class="req">*</span></label><input type="text" data-crm="BT_Reference" autocomplete="off" placeholder="e.g. invoice or membership number" required><span class="error-msg">Required</span></div>`;
+      <div class="field"><label>Name on card <span class="req">*</span></label><input type="text" data-crm="Accountname" autocomplete="cc-name" required><span class="error-msg">Required</span></div>`;
+  } else if (state.payMethod === "bt") {
+    payFields = `<div class="field"><label>Account holder name <span class="req">*</span></label><input type="text" data-crm="Accountname" autocomplete="cc-name" required><span class="error-msg">Required</span></div>
+      <div class="field"><label>IBAN <span class="req">*</span></label><input type="text" data-crm="IBAN" autocomplete="off" placeholder="e.g. CH93 0076 2011 6238 5295 7" required><span class="error-msg">Required</span></div>
+      <div class="field"><label>BIC / SWIFT</label><input type="text" data-crm="BIC" autocomplete="off" placeholder="e.g. UBSWCHZH80A"></div>`;
   }
 
   const toggleHtml = tabs.map(t =>
     `<button class="${state.payMethod === t.key ? 'active' : ''}" id="toggle_${t.key}">${t.label}</button>`
   ).join("");
 
-  return `<div class="card">${getBcHtml()}${getOutcomeHtml()}
-    <div class="section-heading">Payment method</div>
-    <div class="pay-toggle">${toggleHtml}</div>
-    <div class="form-grid">${payFields}
-      <div class="field"><label>Referral code</label><input type="text" data-crm="ReferralCode" autocomplete="off" placeholder="If you have one"></div>
+  return `<div class="card">${bc}${outcomeHtml}
+    <div class="section-heading">Personal details</div>
+    <div class="form-grid">
+      <div class="form-row">
+        <div class="field"><label>First name <span class="req">*</span></label><input type="text" data-crm="FirstName" autocomplete="given-name" required><span class="error-msg">Required</span></div>
+        <div class="field"><label>Middle name</label><input type="text" data-crm="MiddleName" autocomplete="additional-name"></div>
+        <div class="field"><label>Last name <span class="req">*</span></label><input type="text" data-crm="LastName" autocomplete="family-name" required><span class="error-msg">Required</span></div>
+      </div>
+      <div class="field"><label>Billing address <span class="req">*</span></label><input type="text" data-crm="Address1Street1" autocomplete="address-line1" placeholder="First line of address" required><span class="error-msg">Required</span></div>
+      <div class="form-row">
+        <div class="field"><label>Town / City <span class="req">*</span></label><input type="text" data-crm="Address1City" autocomplete="address-level2" required><span class="error-msg">Required</span></div>
+        <div class="field"><label>Postcode <span class="req">*</span></label><input type="text" data-crm="Address1PostCode" autocomplete="postal-code" required><span class="error-msg">Required</span></div>
+      </div>
+      <div class="field"><label>Mobile phone number <span class="req">*</span></label><input type="tel" data-crm="MobilePhone" autocomplete="tel" placeholder="Include country code" required><span class="error-msg">Required</span></div>
     </div>
+    <div class="section-heading" style="margin-top:28px;">Payment method</div>
+    <div class="pay-toggle">${toggleHtml}</div>
+    <div class="form-grid">${payFields}</div>
     <div class="btn-row"><button class="btn-back" id="backBtn">← Previous</button><button class="btn-primary" id="payBtn">Join &amp; pay</button></div>
   </div>`;
 }
@@ -1049,8 +974,11 @@ function bindEvents() {
     b.addEventListener("click", () => handleFieldsetChoice(parseInt(b.dataset.fieldset), parseInt(b.dataset.opt))));
   const back = document.getElementById("backBtn");
   if (back) back.addEventListener("click", goBack);
-  function validateAndProceed(nextPhase) {
+  const pay = document.getElementById("payBtn");
+  if (pay) pay.addEventListener("click", () => {
+    // Clear previous errors
     document.querySelectorAll(".field.has-error").forEach(f => f.classList.remove("has-error"));
+    // Validate required fields
     let valid = true;
     document.querySelectorAll("[required]").forEach(el => {
       if (!el.value.trim()) {
@@ -1063,20 +991,12 @@ function bindEvents() {
       if (first) first.focus();
       return;
     }
-    saveFormFields();
-    if (nextPhase === "complete") state.formData._payMethod = state.payMethod;
-    state.phase = nextPhase; render();
-  }
-  const next = document.getElementById("nextBtn");
-  if (next) next.addEventListener("click", () => {
-    if (state.phase === "contact") validateAndProceed("personal");
-    else if (state.phase === "personal") validateAndProceed("payment");
-  });
-  const pay = document.getElementById("payBtn");
-  if (pay) pay.addEventListener("click", () => validateAndProceed("complete"));
-  const reducedCheck = document.getElementById("reducedRateCheck");
-  if (reducedCheck) reducedCheck.addEventListener("change", () => {
-    document.getElementById("reducedRateFields").style.display = reducedCheck.checked ? "block" : "none";
+    // Save all data-crm values from payment form
+    document.querySelectorAll("[data-crm]").forEach(el => {
+      if (el.value.trim()) state.formData[el.getAttribute("data-crm")] = el.value.trim();
+    });
+    state.formData._payMethod = state.payMethod;
+    state.phase = "complete"; render();
   });
   ["dd", "cc", "bt"].forEach(key => {
     const btn = document.getElementById("toggle_" + key);
@@ -1121,33 +1041,13 @@ function handleFieldsetChoice(fi, oi) {
 }
 
 function resolveOption(opt) {
-  if (opt.outcome) {
-    state.selectedOutcome = opt.outcome;
-    state.phase = "contact";
-    // Auto-fill country fields from answers if not already set
-    const c = getCountryFromHistory();
-    const map = { UK: "United Kingdom", NL: "Netherlands", CH: "Switzerland" };
-    if (map[c]) {
-      if (!state.formData.Address1CountryRegion) state.formData.Address1CountryRegion = map[c];
-      if (!state.formData.ResidentCountry) state.formData.ResidentCountry = map[c];
-    }
-    render();
-  }
+  if (opt.outcome) { state.selectedOutcome = opt.outcome; state.phase = "payment"; render(); }
   else if (opt.unclear) { state.unclearOutcome = opt.note || "Please contact the membership team."; state.phase = "unclear"; render(); }
   else if (opt.routesTo) { state.currentQ = opt.routesTo; render(); }
 }
 
-function saveFormFields() {
-  document.querySelectorAll("[data-crm]").forEach(el => {
-    if (el.value.trim()) state.formData[el.getAttribute("data-crm")] = el.value.trim();
-  });
-}
-
 function goBack() {
-  saveFormFields();
-  if (state.phase === "payment") { state.phase = "personal"; render(); return; }
-  if (state.phase === "personal") { state.phase = "contact"; render(); return; }
-  if (state.phase === "contact" || state.phase === "unclear") {
+  if (state.phase === "payment" || state.phase === "unclear") {
     state.phase = "questions"; state.selectedOutcome = null; state.unclearOutcome = null;
     const last = state.history.pop(); if (last) state.currentQ = last.questionId;
     render(); return;
