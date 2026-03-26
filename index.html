@@ -678,6 +678,9 @@ function renderPayment() {
   const preselectedCountry = countryNameMap[country] || "";
   const tabs = getPaymentTabsForCountry(country);
 
+  const countryOptions = ["Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia","Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo","Costa Rica","Croatia","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar","Romania","Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"];
+  const countryOptionsHtml = '<option value="">Select…</option>' + countryOptions.map(c => `<option>${c}</option>`).join("");
+
   // Default to first available tab if current method not available for this country
   if (!state.payMethod || !tabs.find(t => t.key === state.payMethod)) {
     state.payMethod = tabs[0].key;
@@ -714,7 +717,7 @@ function renderPayment() {
   ).join("");
 
   return `<div class="card">${bc}${outcomeHtml}
-    <div class="section-heading">Personal details</div>
+    <div class="section-heading">Contact details</div>
     <div class="form-grid">
       <div class="form-row">
         <div class="field"><label>First name <span class="req">*</span></label><input type="text" data-crm="FirstName" autocomplete="given-name" required><span class="error-msg">Required</span></div>
@@ -729,11 +732,24 @@ function renderPayment() {
       </div>
       <div class="form-row">
         <div class="field"><label>Postal code <span class="req">*</span></label><input type="text" data-crm="Address1PostCode" autocomplete="postal-code" required><span class="error-msg">Required</span></div>
-        <div class="field"><label>Country <span class="req">*</span></label><select data-crm="Address1CountryRegion" autocomplete="country-name" required><option value="">Select…</option><option>Afghanistan</option><option>Albania</option><option>Algeria</option><option>Andorra</option><option>Angola</option><option>Antigua and Barbuda</option><option>Argentina</option><option>Armenia</option><option>Australia</option><option>Austria</option><option>Azerbaijan</option><option>Bahamas</option><option>Bahrain</option><option>Bangladesh</option><option>Barbados</option><option>Belarus</option><option>Belgium</option><option>Belize</option><option>Benin</option><option>Bhutan</option><option>Bolivia</option><option>Bosnia and Herzegovina</option><option>Botswana</option><option>Brazil</option><option>Brunei</option><option>Bulgaria</option><option>Burkina Faso</option><option>Burundi</option><option>Cabo Verde</option><option>Cambodia</option><option>Cameroon</option><option>Canada</option><option>Central African Republic</option><option>Chad</option><option>Chile</option><option>China</option><option>Colombia</option><option>Comoros</option><option>Congo</option><option>Costa Rica</option><option>Croatia</option><option>Cuba</option><option>Cyprus</option><option>Czech Republic</option><option>Denmark</option><option>Djibouti</option><option>Dominica</option><option>Dominican Republic</option><option>Ecuador</option><option>Egypt</option><option>El Salvador</option><option>Equatorial Guinea</option><option>Eritrea</option><option>Estonia</option><option>Eswatini</option><option>Ethiopia</option><option>Fiji</option><option>Finland</option><option>France</option><option>Gabon</option><option>Gambia</option><option>Georgia</option><option>Germany</option><option>Ghana</option><option>Greece</option><option>Grenada</option><option>Guatemala</option><option>Guinea</option><option>Guinea-Bissau</option><option>Guyana</option><option>Haiti</option><option>Honduras</option><option>Hungary</option><option>Iceland</option><option>India</option><option>Indonesia</option><option>Iran</option><option>Iraq</option><option>Ireland</option><option>Israel</option><option>Italy</option><option>Jamaica</option><option>Japan</option><option>Jordan</option><option>Kazakhstan</option><option>Kenya</option><option>Kiribati</option><option>Kuwait</option><option>Kyrgyzstan</option><option>Laos</option><option>Latvia</option><option>Lebanon</option><option>Lesotho</option><option>Liberia</option><option>Libya</option><option>Liechtenstein</option><option>Lithuania</option><option>Luxembourg</option><option>Madagascar</option><option>Malawi</option><option>Malaysia</option><option>Maldives</option><option>Mali</option><option>Malta</option><option>Marshall Islands</option><option>Mauritania</option><option>Mauritius</option><option>Mexico</option><option>Micronesia</option><option>Moldova</option><option>Monaco</option><option>Mongolia</option><option>Montenegro</option><option>Morocco</option><option>Mozambique</option><option>Myanmar</option><option>Namibia</option><option>Nauru</option><option>Nepal</option><option>Netherlands</option><option>New Zealand</option><option>Nicaragua</option><option>Niger</option><option>Nigeria</option><option>North Korea</option><option>North Macedonia</option><option>Norway</option><option>Oman</option><option>Pakistan</option><option>Palau</option><option>Palestine</option><option>Panama</option><option>Papua New Guinea</option><option>Paraguay</option><option>Peru</option><option>Philippines</option><option>Poland</option><option>Portugal</option><option>Qatar</option><option>Romania</option><option>Russia</option><option>Rwanda</option><option>Saint Kitts and Nevis</option><option>Saint Lucia</option><option>Saint Vincent and the Grenadines</option><option>Samoa</option><option>San Marino</option><option>Sao Tome and Principe</option><option>Saudi Arabia</option><option>Senegal</option><option>Serbia</option><option>Seychelles</option><option>Sierra Leone</option><option>Singapore</option><option>Slovakia</option><option>Slovenia</option><option>Solomon Islands</option><option>Somalia</option><option>South Africa</option><option>South Korea</option><option>South Sudan</option><option>Spain</option><option>Sri Lanka</option><option>Sudan</option><option>Suriname</option><option>Sweden</option><option>Switzerland</option><option>Syria</option><option>Taiwan</option><option>Tajikistan</option><option>Tanzania</option><option>Thailand</option><option>Timor-Leste</option><option>Togo</option><option>Tonga</option><option>Trinidad and Tobago</option><option>Tunisia</option><option>Turkey</option><option>Turkmenistan</option><option>Tuvalu</option><option>Uganda</option><option>Ukraine</option><option>United Arab Emirates</option><option>United Kingdom</option><option>United States</option><option>Uruguay</option><option>Uzbekistan</option><option>Vanuatu</option><option>Vatican City</option><option>Venezuela</option><option>Vietnam</option><option>Yemen</option><option>Zambia</option><option>Zimbabwe</option></select><span class="error-msg">Required</span></div>
+        <div class="field"><label>Country <span class="req">*</span></label><select data-crm="Address1CountryRegion" autocomplete="country-name" required>${countryOptionsHtml}</select><span class="error-msg">Required</span></div>
       </div>
       <div class="form-row">
         <div class="field"><label>Phone number <span class="req">*</span></label><input type="tel" data-crm="MobilePhone" autocomplete="tel" placeholder="Include country code" required><span class="error-msg">Required</span></div>
         <div class="field"><label>Email address <span class="req">*</span></label><input type="email" data-crm="Email" autocomplete="email" placeholder="you@example.com" required><span class="error-msg">Required</span></div>
+      </div>
+    </div>
+    <div class="section-heading" style="margin-top:28px;">Personal details</div>
+    <div class="form-grid">
+      <div class="field"><label>I live in / I'm a resident of… <span class="req">*</span></label><select data-crm="ResidentCountry" required>${countryOptionsHtml}</select><span class="error-msg">Required</span></div>
+      <div class="form-row">
+        <div class="field"><label>Your employer</label><input type="text" data-crm="Employer" autocomplete="organization" placeholder="Employer name"></div>
+        <div class="field"><label>Your rank</label><input type="text" data-crm="Rank" autocomplete="off" placeholder="Your rank"></div>
+      </div>
+      <div class="field" style="margin-top:8px;"><label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;"><input type="checkbox" id="reducedRateCheck" style="width:auto;"> Apply for reduced rate</label></div>
+      <div id="reducedRateFields" style="display:none;">
+        <div class="field" style="margin-top:12px;"><label>Supporting document</label><input type="file" data-crm="ReducedRateDoc" style="padding:8px 0;"></div>
+        <div class="field"><label>Additional information</label><textarea data-crm="ReducedRateNotes" rows="3" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-family:inherit;font-size:15px;color:var(--gray-800);resize:vertical;" placeholder="Please provide any details to support your application"></textarea></div>
       </div>
     </div>
     <div class="section-heading" style="margin-top:28px;">Payment method</div>
@@ -1016,6 +1032,10 @@ function bindEvents() {
     state.formData._payMethod = state.payMethod;
     state.phase = "complete"; render();
   });
+  const reducedCheck = document.getElementById("reducedRateCheck");
+  if (reducedCheck) reducedCheck.addEventListener("change", () => {
+    document.getElementById("reducedRateFields").style.display = reducedCheck.checked ? "block" : "none";
+  });
   ["dd", "cc", "bt"].forEach(key => {
     const btn = document.getElementById("toggle_" + key);
     if (btn) btn.addEventListener("click", () => {
@@ -1062,11 +1082,12 @@ function resolveOption(opt) {
   if (opt.outcome) {
     state.selectedOutcome = opt.outcome;
     state.phase = "payment";
-    // Auto-fill country from answers if not already set
-    if (!state.formData.Address1CountryRegion) {
-      const c = getCountryFromHistory();
-      const map = { UK: "United Kingdom", NL: "Netherlands", CH: "Switzerland" };
-      if (map[c]) state.formData.Address1CountryRegion = map[c];
+    // Auto-fill country fields from answers if not already set
+    const c = getCountryFromHistory();
+    const map = { UK: "United Kingdom", NL: "Netherlands", CH: "Switzerland" };
+    if (map[c]) {
+      if (!state.formData.Address1CountryRegion) state.formData.Address1CountryRegion = map[c];
+      if (!state.formData.ResidentCountry) state.formData.ResidentCountry = map[c];
     }
     render();
   }
