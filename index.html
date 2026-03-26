@@ -515,8 +515,8 @@ const QUESTIONS = {
       {
         legend: "Maritime membership",
         options: [
-          { label: "Seagoing officer — certificated", note: "I have a valid management or operational CoC", outcome: "UK F1 membership" },
-          { label: "Seagoing officer — uncertificated", note: "I am an uncertificated officer working onboard ships", outcome: "UK P1 membership" },
+          { label: "Seagoing officer — certificated", outcome: "UK F1 membership" },
+          { label: "Seagoing officer — uncertificated", outcome: "UK F1 membership" },
           { label: "Pilot", outcome: "UK P1 membership" },
           { label: "Marine rating", outcome: "UK R1 membership" },
         ]
@@ -542,25 +542,26 @@ const QUESTIONS = {
     options: [
       { label: "Pilot, Harbourmaster, DPA or in a regulated role", outcome: "UK P1 membership" },
       { label: "Other shore side role", outcome: "UK S1 membership" },
-      { label: "I work less than 30 hours in a shore side role", unclear: true },
+      { label: "I work less than 30 hours in a shore side role", outcome: "UK K1 membership" },
     ],
     openQuestions: ["Under 30 hours — does this need evidence, or can it be handled online without verification?"]
   }
 };
 
 const MEMBERSHIP_INFO = {
-  "UK F1 membership": { branch: "United Kingdom", name: "Seagoing officer (certificated)", monthly: { dd: "£29.40", card: "£31.80" }, annual: null },
-  "UK P1 membership": { branch: "United Kingdom", name: "Professional member", monthly: { dd: "£23.25", card: "£25.25" }, annual: null },
-  "UK R1 membership": { branch: "United Kingdom", name: "Marine rating / Pilot", monthly: { dd: "£21.60", card: "£23.00" }, annual: null },
-  "UK S1 membership": { branch: "United Kingdom", name: "Shore staff member", monthly: { dd: "£23.25", card: "£25.25" }, annual: null },
+  "UK F1 membership": { branch: "United Kingdom", name: "Seagoing officer", monthly: { dd: "£29.40", card: "£31.80" }, annual: null },
+  "UK P1 membership": { branch: "United Kingdom", name: "Pilot, Harbourmaster or DPA", monthly: { dd: "£23.25", card: "£25.25" }, annual: null },
+  "UK R1 membership": { branch: "United Kingdom", name: "Marine rating", monthly: { dd: "£21.60", card: "£23.00" }, annual: null },
+  "UK S1 membership": { branch: "United Kingdom", name: "Employed shore side and trawler officer", monthly: { dd: "£23.25", card: "£25.25" }, annual: null },
+  "UK K1 membership": { branch: "United Kingdom", name: "Reduced rate shore side", monthly: { dd: "£17.00" }, annual: null },
   "UK Y1 membership": { branch: "United Kingdom", name: "Yacht officer", monthly: null, annual: "€405.00" },
   "UK Y2 membership": { branch: "United Kingdom", name: "Yacht crew", monthly: null, annual: "€275.00" },
-  "UK C1 membership": { branch: "United Kingdom", name: "Cadet / Student / Trainee", monthly: null, annual: "£36.00" },
+  "UK C1 membership": { branch: "United Kingdom", name: "Cadet", monthly: null, annual: "£36.00" },
   "NL 23 Years and Older": { branch: "Netherlands", name: "Member (23 years and older)", monthly: null, annual: null, tbc: true },
   "NL 22 Years and Younger": { branch: "Netherlands", name: "Member (22 years and younger)", monthly: null, annual: null, tbc: true },
-  "NL Student membership": { branch: "Netherlands", name: "Student member", monthly: null, annual: null, tbc: true },
-  "CH Employed member union fee": { branch: "Switzerland", name: "Employed member union fee", monthly: null, annual: null, tbc: true },
-  "CH Apprentice fee": { branch: "Switzerland", name: "Apprentice fee", monthly: null, annual: null, tbc: true },
+  "NL Student membership": { branch: "Netherlands", name: "Student", monthly: null, annual: null, tbc: true },
+  "CH Employed member union fee": { branch: "Switzerland", name: "Employed ", monthly: null, annual: null, tbc: true },
+  "CH Apprentice fee": { branch: "Switzerland", name: "Apprentice", monthly: null, annual: null, tbc: true },
 };
 
 const STEP_NAMES = ["Your situation", "Contact details", "Personal details", "Payment"];
@@ -696,7 +697,7 @@ function getOutcomeHtml() {
   } else if (info.monthly) {
     costHtml = `<span style="font-size:22px;font-weight:700;color:var(--nautilus-navy);">${info.monthly.dd}</span> <span style="font-size:14px;color:var(--gray-600);">per month (Direct Debit)</span><br><span style="font-size:22px;font-weight:700;color:var(--nautilus-navy);">${info.monthly.card}</span> <span style="font-size:14px;color:var(--gray-600);">per month (Card)</span>`;
   }
-  return `<div class="outcome-card"><div class="badge">${info.branch} branch</div><h3>Your membership</h3><p style="font-size:15px;color:var(--gray-600);margin-bottom:8px;">${info.name}</p><p>${costHtml}</p></div>`;
+  return `<div class="outcome-card"><div class="badge">${info.branch} branch</div><h3>${info.name} membership</h3><p>${costHtml}</p></div>`;
 }
 
 function getBcHtml() {
