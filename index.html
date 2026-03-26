@@ -399,14 +399,17 @@
   }
   .crm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
   .crm-field {
-    display: flex; justify-content: space-between; align-items: baseline;
+    display: flex; align-items: baseline; gap: 8px;
     padding: 6px 10px; border-radius: 3px; font-size: 13px;
   }
   .crm-field:nth-child(odd) { background: var(--gray-50); }
-  .crm-field .crm-key { color: var(--gray-600); font-family: monospace; font-size: 12px; }
-  .crm-field .crm-val { font-weight: 600; color: var(--gray-800); text-align: right; max-width: 60%; }
+  .crm-field .crm-key { color: var(--gray-600); font-family: monospace; font-size: 12px; min-width: 140px; }
+  .crm-field .crm-src { font-size: 10px; min-width: 70px; text-align: center; padding: 1px 6px; border-radius: 3px; white-space: nowrap; }
+  .crm-field .crm-src.src-join { background: #dbeafe; color: #1e40af; }
+  .crm-field .crm-src.src-profile { background: #d1fae5; color: #065f46; }
+  .crm-field .crm-src.src-internal { background: var(--gray-100); color: var(--gray-400); }
+  .crm-field .crm-val { font-weight: 600; color: var(--gray-800); text-align: right; margin-left: auto; max-width: 50%; }
   .crm-field .crm-val.empty { color: var(--gray-300); font-weight: 400; font-style: italic; }
-
   @media (max-width: 700px) {
     .member-body { flex-direction: column; }
     .quicklinks { width: 100%; }
@@ -710,6 +713,7 @@ function renderContact() {
   return `<div class="card">${getBcHtml()}${getOutcomeHtml()}
     <div class="section-heading">Contact details</div>
     <div class="form-grid">
+      <div class="field"><label>Salutation</label><select data-crm="Salutation"><option value="">Select…</option><option>Mr</option><option>Ms</option><option>Mrs</option><option>Mx</option><option>Captain</option><option>Commodore</option><option>Dr</option></select></div>
       <div class="form-row">
         <div class="field"><label>First name <span class="req">*</span></label><input type="text" name="given-name" data-crm="FirstName" autocomplete="given-name" required><span class="error-msg">Required</span></div>
         <div class="field"><label>Middle name</label><input type="text" name="additional-name" data-crm="MiddleName" autocomplete="additional-name"></div>
@@ -856,7 +860,7 @@ function renderComplete() {
       <div class="field"><label>Place of birth</label><input type="text" data-crm="PlaceOfBirth" autocomplete="off" placeholder="Town / city"></div>
       <div class="field"><label>Gender</label><select data-crm="Gender" autocomplete="sex"><option value="">Select…</option><option>Male</option><option>Female</option><option>Non-binary</option><option>Prefer not to say</option></select></div>
     </div>
-    <div class="field"><label>Salutation</label><select data-crm="Salutation"><option value="">Select…</option><option>Mr</option><option>Ms</option><option>Mrs</option><option>Mx</option><option>Captain</option><option>Commodore</option><option>Dr</option></select></div>
+    <div class="field"><label>Alternate phone</label><input type="tel" data-crm="Address1Phone" autocomplete="off" placeholder="Landline or other number"></div>
     <div class="field"><label>Sector</label><select data-crm="Sector"><option value="">Select…</option><option>Merchant navy</option><option>Ocean-going cruise ships</option><option>Offshore</option><option>Yacht</option><option>Fishing</option><option>Ports &amp; harbours</option><option>Tugs</option><option>Inland waterways (cargo)</option><option>Inland waterways (river cruise)</option><option>Dredging</option><option>Locks</option><option>Pilotage</option><option>Other</option></select></div>`;
 
   let prefFields = `
@@ -959,9 +963,12 @@ function updateCrmPanel() {
     if (empDisplay) empDisplay.textContent = v("Employer") || "Employer not yet set";
   }
 
-  function f(key, val) {
+  function f(key, val, source) {
     const has = !!val;
-    return '<div class="crm-field"><span class="crm-key">' + key + '</span><span class="crm-val ' + (has ? '' : 'empty') + '">' + (has ? val : 'not set') + '</span></div>';
+    const display = has ? val : (source === 'Internal only' ? 'N/A' : 'not set');
+    const src = source || '';
+    const srcClass = src === 'Join form' ? 'src-join' : src === 'Profile form' ? 'src-profile' : src === 'Internal only' ? 'src-internal' : '';
+    return '<div class="crm-field"><span class="crm-key">' + key + '</span><span class="crm-src ' + srcClass + '">' + src + '</span><span class="crm-val ' + (has ? '' : 'empty') + '">' + display + '</span></div>';
   }
 
   // Mask sensitive payment values
@@ -971,77 +978,76 @@ function updateCrmPanel() {
     return "•".repeat(val.length - show) + val.slice(-show);
   }
 
+  // Person fields (per CRM spreadsheet)
   const personHtml = [
-    f("FirstName", v("FirstName")), f("MiddleName", v("MiddleName")), f("LastName", v("LastName")),
-    f("Birthday", v("Birthday")), f("PlaceOfBirth", v("PlaceOfBirth")),
-    f("Gender", v("Gender")), f("Nationality", v("Nationality")),
-    f("NationalityId", ""), f("Salutation", v("Salutation")),
-    f("MobilePhone", v("MobilePhone")), f("Email", ""),
-    f("Address1Street1", v("Address1Street1")), f("Address1Street2", ""),
-    f("Address1City", v("Address1City")), f("Address1County", ""),
-    f("Address1PostCode", v("Address1PostCode")), f("Address1CountryRegion", ""),
+    f("Id", "", "Internal only"),
+    f("FirstName", v("FirstName"), "Join form"), f("MiddleName", v("MiddleName"), "Join form"), f("LastName", v("LastName"), "Join form"),
+    f("NationalityId", "", "Internal only"), f("Nationality", v("Nationality"), "Profile form"),
+    f("Birthday", v("Birthday"), "Profile form"), f("PlaceOfBirth", v("PlaceOfBirth"), "Profile form"),
+    f("Gender", v("Gender"), "Profile form"), f("Salutation", v("Salutation"), "Join form"),
+    f("Address1Phone", v("Address1Phone"), "Profile form"), f("MobilePhone", v("MobilePhone"), "Join form"), f("Email", v("Email"), "Join form"),
+    f("Address1Street1", v("Address1Street1"), "Join form"), f("Address1Street2", v("Address1Street2"), "Join form"),
+    f("Address1County", v("Address1County"), "Join form"), f("Address1City", v("Address1City"), "Join form"),
+    f("Address1PostCode", v("Address1PostCode"), "Join form"), f("Address1CountryRegion", v("Address1CountryRegion"), "Join form"),
+    f("EmployerId", "", "Internal only"), f("Employer", v("Employer"), "Join form"),
+    f("Contract location", contractLocation, "Join form"),
+    f("ShipId", "", "Internal only"), f("Ship", v("Ship"), "Profile form"),
+    f("CadetStartDate", v("CadetStartDate"), "Profile form"), f("CadetEndDate", v("CadetEndDate"), "Profile form"),
+    f("DischargeBookNumber", "", "Internal only"),
+    f("RankId", "", "Internal only"), f("Rank", v("Rank"), "Join form"),
+    f("BACSWeek", "", "Internal only"),
+    f("ClassId", state.selectedOutcome || "", "Join form"), f("Branch", branch, "Join form"),
+    f("PreferredMethodofContact", v("PreferredMethodofContact"), "Profile form"),
+    f("DepartmentId", "", "Internal only"),
+    f("SWZ", "", "Profile form"), f("Telegraph", "", "Profile form"),
+    f("Sector", v("Sector"), "Profile form"),
   ].join("");
 
-  let memberArr = [
-    f("Branch", branch), f("Contract location", contractLocation),
-    f("ClassId", state.selectedOutcome || ""),
-    f("Employer", v("Employer")), f("EmployerId", ""),
-    f("Ship", v("Ship")), f("ShipId", ""),
-    f("Rank", v("Rank")), f("RankId", ""),
-    f("Sector", v("Sector")),
-  ];
-  if (isStudying) {
-    memberArr.push(f("CadetStartDate", v("CadetStartDate")));
-    memberArr.push(f("CadetEndDate", v("CadetEndDate")));
-  }
-  memberArr.push(f("DischargeBookNumber", ""), f("Functie", ""), f("Salary", ""));
-  const memberHtml = memberArr.join("");
+  // ContactMethods (per CRM spreadsheet)
+  const contactHtml = [
+    f("Email", "", "Profile form"), f("Phone", "", "Profile form"), f("Mail", "", "Profile form"),
+    f("SendMarketingMaterial", v("SendMarketingMaterial"), "Profile form"),
+    f("NautilusPlus", "", "Profile form"), f("ThirdPartyMarketing", v("ThirdPartyMarketing"), "Profile form"),
+    f("ValidAccess", "", "Internal only"),
+    f("TotalUnpaidAmountContinuous", "", "Internal only"),
+  ].join("");
 
+  // PaymentDetails (per CRM spreadsheet)
   const payMethod = state.formData._payMethod || state.payMethod;
   const payLabel = payMethod === "dd" ? "ContinuousDirectDebit" : payMethod === "bt" ? "BankTransfer" : "ContinuousCreditDebitcard";
-  let payArr = [f("PaymentMethod", payLabel), f("PaymentFrequency", ""), f("BACSWeek", "")];
-  if (payMethod === "dd") {
-    payArr.push(f("Accountname", v("Accountname")));
-    payArr.push(f("Accountnumber", mask(state.formData.Accountnumber || "", 2)));
-    payArr.push(f("SortCode", mask(state.formData.SortCode || "", 2)));
-  }
-  if (payMethod === "bt") {
-    payArr.push(f("Accountname", v("Accountname")));
-    payArr.push(f("IBAN", mask(state.formData.IBAN || "", 4)));
-    payArr.push(f("BIC", state.formData.BIC || v("BIC")));
-  }
-  payArr.push(f("IsEuropeSubscription", ""), f("TotalUnpaidAmountContinuous", ""));
+  let payArr = [
+    f("PaymentMethod", payLabel, "Join form"), f("PaymentFrequency", v("PaymentFrequency"), "Join form"),
+    f("IsEuropeSubscription", "", "Internal only"), f("Salary", "", "Internal only"), f("Functie", "", "Internal only"),
+    f("BACSWeek", "", "Internal only"),
+    f("Accountname", v("Accountname"), "Join form"),
+    f("Accountnumber", mask(state.formData.Accountnumber || "", 2), "Join form"),
+    f("SortCode", mask(state.formData.SortCode || "", 2), "Join form"),
+  ];
   const payHtml = payArr.join("");
 
-  const contactHtml = [
-    f("PreferredMethodofContact", v("PreferredMethodofContact")),
-    f("Telegraph", ""), f("SWZ", ""),
-    f("SendMarketingMaterial", v("SendMarketingMaterial")),
-    f("NautilusPlus", ""), f("ThirdPartyMarketing", v("ThirdPartyMarketing")),
-    f("ValidAccess", ""),
-  ].join("");
-
-  // Count populated vs total
+  // Count populated vs total (per spreadsheet fields)
   const allCrmValues = [
-    v("FirstName"), v("MiddleName"), v("LastName"), v("Birthday"), v("PlaceOfBirth"),
-    v("Gender"), v("Nationality"), "", v("Salutation"), v("MobilePhone"), "",
-    v("Address1Street1"), "", v("Address1City"), "", v("Address1PostCode"), "",
-    branch, contractLocation, state.selectedOutcome || "",
-    v("Employer"), "", v("Ship"), "", v("Rank"), "", v("Sector"),
+    "", v("FirstName"), v("MiddleName"), v("LastName"), "", v("Nationality"),
+    v("Birthday"), v("PlaceOfBirth"), v("Gender"), v("Salutation"),
+    "", v("MobilePhone"), v("Email"),
+    v("Address1Street1"), v("Address1Street2"), v("Address1County"), v("Address1City"),
+    v("Address1PostCode"), v("Address1CountryRegion"),
+    "", v("Employer"), contractLocation, "", v("Ship"),
+    v("CadetStartDate"), v("CadetEndDate"), "",
+    "", v("Rank"), "", state.selectedOutcome || "", branch,
+    v("PreferredMethodofContact"), "", "", "", v("Sector"),
+    "", "", "", v("SendMarketingMaterial"), "", v("ThirdPartyMarketing"), "", "",
+    payLabel, v("PaymentFrequency"), "", "", "", "",
+    v("Accountname"), state.formData.Accountnumber||"", state.formData.SortCode||"",
   ];
-  if (isStudying) { allCrmValues.push(v("CadetStartDate"), v("CadetEndDate")); }
-  allCrmValues.push("","","", payLabel, "", "");
-  if (payMethod === "dd") { allCrmValues.push(v("Accountname"), state.formData.Accountnumber||"", state.formData.SortCode||""); }
-  allCrmValues.push("","", v("PreferredMethodofContact"), "","", v("SendMarketingMaterial"), "", v("ThirdPartyMarketing"), "");
   const populated = allCrmValues.filter(function(x){ return !!x; }).length;
   const total = allCrmValues.length;
 
   panel.innerHTML =
     '<div class="crm-panel-header"><span class="crm-badge">CRM</span><h4>Member record</h4><p>Below the line — not shown to user&ensp;·&ensp;' + populated + ' / ' + total + ' fields populated</p></div>' +
     '<div class="crm-section-label">Person</div><div class="crm-grid">' + personHtml + '</div>' +
-    '<div class="crm-section-label">Membership &amp; Employment</div><div class="crm-grid">' + memberHtml + '</div>' +
-    '<div class="crm-section-label">Payment</div><div class="crm-grid">' + payHtml + '</div>' +
-    '<div class="crm-section-label">Contact &amp; Preferences</div><div class="crm-grid">' + contactHtml + '</div>';
+    '<div class="crm-section-label">ContactMethods</div><div class="crm-grid">' + contactHtml + '</div>' +
+    '<div class="crm-section-label">PaymentDetails</div><div class="crm-grid">' + payHtml + '</div>';
 }
 
 
@@ -1053,20 +1059,21 @@ function bindEvents() {
   const back = document.getElementById("backBtn");
   if (back) back.addEventListener("click", goBack);
   function validateAndProceed(nextPhase) {
-    document.querySelectorAll(".field.has-error").forEach(f => f.classList.remove("has-error"));
-    let valid = true;
-    document.querySelectorAll("[required]").forEach(el => {
-      const empty = el.type === "checkbox" ? !el.checked : !el.value.trim();
-      if (empty) {
-        el.closest(".field").classList.add("has-error");
-        valid = false;
-      }
-    });
-    if (!valid) {
-      const first = document.querySelector(".field.has-error input, .field.has-error select");
-      if (first) first.focus();
-      return;
-    }
+    // TODO: RE-ENABLE VALIDATION BEFORE PUSHING TO LIVE
+    // document.querySelectorAll(".field.has-error").forEach(f => f.classList.remove("has-error"));
+    // let valid = true;
+    // document.querySelectorAll("[required]").forEach(el => {
+    //   const empty = el.type === "checkbox" ? !el.checked : !el.value.trim();
+    //   if (empty) {
+    //     el.closest(".field").classList.add("has-error");
+    //     valid = false;
+    //   }
+    // });
+    // if (!valid) {
+    //   const first = document.querySelector(".field.has-error input, .field.has-error select");
+    //   if (first) first.focus();
+    //   return;
+    // }
     saveFormFields();
     if (nextPhase === "complete") state.formData._payMethod = state.payMethod;
     state.phase = nextPhase; render();
