@@ -548,6 +548,21 @@ const QUESTIONS = {
   }
 };
 
+const MEMBERSHIP_INFO = {
+  "UK F1 membership": { branch: "United Kingdom", name: "Seagoing officer (certificated)", monthly: { dd: "£29.40", card: "£31.80" }, annual: null },
+  "UK P1 membership": { branch: "United Kingdom", name: "Professional member", monthly: { dd: "£23.25", card: "£25.25" }, annual: null },
+  "UK R1 membership": { branch: "United Kingdom", name: "Marine rating / Pilot", monthly: { dd: "£21.60", card: "£23.00" }, annual: null },
+  "UK S1 membership": { branch: "United Kingdom", name: "Shore staff member", monthly: { dd: "£23.25", card: "£25.25" }, annual: null },
+  "UK Y1 membership": { branch: "United Kingdom", name: "Yacht officer", monthly: null, annual: "€405.00" },
+  "UK Y2 membership": { branch: "United Kingdom", name: "Yacht crew", monthly: null, annual: "€275.00" },
+  "UK C1 membership": { branch: "United Kingdom", name: "Cadet / Student / Trainee", monthly: null, annual: "£36.00" },
+  "NL 23 Years and Older": { branch: "Netherlands", name: "Member (23 years and older)", monthly: null, annual: null, tbc: true },
+  "NL 22 Years and Younger": { branch: "Netherlands", name: "Member (22 years and younger)", monthly: null, annual: null, tbc: true },
+  "NL Student membership": { branch: "Netherlands", name: "Student member", monthly: null, annual: null, tbc: true },
+  "CH Employed member union fee": { branch: "Switzerland", name: "Employed member union fee", monthly: null, annual: null, tbc: true },
+  "CH Apprentice fee": { branch: "Switzerland", name: "Apprentice fee", monthly: null, annual: null, tbc: true },
+};
+
 const STEP_NAMES = ["Your situation", "Payment", "Confirmation"];
 
 let state = { history: [], currentQ: "Q1", selectedOutcome: null, unclearOutcome: null, phase: "questions", payMethod: null, formData: {} };
@@ -670,7 +685,20 @@ function renderPayment() {
 
   let outcomeHtml = "";
   if (state.selectedOutcome) {
-    outcomeHtml = `<div class="outcome-card"><div class="badge">Your membership</div><h3>${state.selectedOutcome}</h3><p>Your annual fee is XXX Your monthly fee is XXX.</p></div>`;
+    const info = MEMBERSHIP_INFO[state.selectedOutcome];
+    let costHtml = "";
+    if (info) {
+      if (info.tbc) {
+        costHtml = "Fees to be confirmed by your branch.";
+      } else if (info.annual && !info.monthly) {
+        costHtml = `${info.annual} per year`;
+      } else if (info.monthly) {
+        costHtml = `${info.monthly.dd} per month (Direct Debit) · ${info.monthly.card} per month (Card)`;
+      }
+      outcomeHtml = `<div class="outcome-card"><div class="badge">${info.branch}</div><h3>${info.name}</h3><p>${costHtml}</p></div>`;
+    } else {
+      outcomeHtml = `<div class="outcome-card"><div class="badge">Your membership</div><h3>${state.selectedOutcome}</h3></div>`;
+    }
   }
 
   const country = getCountryFromHistory();
