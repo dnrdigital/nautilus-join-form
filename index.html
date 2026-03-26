@@ -533,12 +533,12 @@ const QUESTIONS = {
 };
 
 const MEMBERSHIP_INFO = {
-  "UK F1 membership": { branch: "United Kingdom", name: "Seagoing officer", monthly: { dd: "£29.40", card: "£31.80" }, annual: null },
-  "UK F1 membership for review": { branch: "United Kingdom", name: "Maritime", monthly: { dd: "£29.40", card: "£31.80" }, annual: null },
-  "UK P1 membership": { branch: "United Kingdom", name: "Pilot, Harbourmaster or DPA", monthly: { dd: "£23.25", card: "£25.25" }, annual: null },
-  "UK R1 membership": { branch: "United Kingdom", name: "Marine rating", monthly: { dd: "£21.60", card: "£23.00" }, annual: null },
-  "UK S1 membership": { branch: "United Kingdom", name: "Employed shore side and trawler officer", monthly: { dd: "£23.25", card: "£25.25" }, annual: null },
-  "UK K1 membership": { branch: "United Kingdom", name: "Reduced rate shore side", monthly: { dd: "£17.00" }, annual: null },
+  "UK F1 membership": { branch: "United Kingdom", name: "Seagoing officer", monthly: { dd: "£29.40", card: "£31.80" }, annual: "£352.80" },
+  "UK F1 membership for review": { branch: "United Kingdom", name: "Maritime", monthly: { dd: "£29.40", card: "£31.80" }, annual: "£352.80" },
+  "UK P1 membership": { branch: "United Kingdom", name: "Pilot, Harbourmaster or DPA", monthly: { dd: "£23.25", card: "£25.25" }, annual: "£279.00" },
+  "UK R1 membership": { branch: "United Kingdom", name: "Marine rating", monthly: { dd: "£21.60", card: "£23.00" }, annual: "£259.20" },
+  "UK S1 membership": { branch: "United Kingdom", name: "Employed shore side and trawler officer", monthly: { dd: "£23.25", card: "£25.25" }, annual: "£279.00" },
+  "UK K1 membership": { branch: "United Kingdom", name: "Reduced rate shore side", monthly: { dd: "£17.00" }, annual: "£204.00" },
   "UK Y1 membership": { branch: "United Kingdom", name: "Yacht officer", monthly: null, annual: "€405.00" },
   "UK Y2 membership": { branch: "United Kingdom", name: "Yacht crew", monthly: null, annual: "€275.00" },
   "UK C1 membership": { branch: "United Kingdom", name: "Cadet", monthly: null, annual: "£36.00" },
@@ -687,10 +687,14 @@ function getOutcomeHtml() {
   let costHtml = "";
   if (info.tbc) {
     costHtml = `<span style="color:var(--gray-600);font-size:14px;">Fees to be confirmed by your branch.</span>`;
-  } else if (info.annual && !info.monthly) {
-    costHtml = `<span style="font-size:22px;font-weight:700;color:var(--nautilus-navy);">${info.annual}</span> <span style="font-size:14px;color:var(--gray-600);">per year</span>`;
   } else if (info.monthly) {
-    costHtml = `<span style="font-size:22px;font-weight:700;color:var(--nautilus-navy);">${info.monthly.dd}</span> <span style="font-size:14px;color:var(--gray-600);">per month (Direct Debit)</span><br><span style="font-size:22px;font-weight:700;color:var(--nautilus-navy);">${info.monthly.card}</span> <span style="font-size:14px;color:var(--gray-600);">per month (Card)</span>`;
+    let lines = [];
+    if (info.monthly.dd) lines.push(`<span style="font-size:22px;font-weight:700;color:var(--nautilus-navy);">${info.monthly.dd}</span> <span style="font-size:14px;color:var(--gray-600);">per month (Direct Debit)</span>`);
+    if (info.monthly.card) lines.push(`<span style="font-size:22px;font-weight:700;color:var(--nautilus-navy);">${info.monthly.card}</span> <span style="font-size:14px;color:var(--gray-600);">per month (Card)</span>`);
+    if (info.annual) lines.push(`<span style="font-size:22px;font-weight:700;color:var(--nautilus-navy);">${info.annual}</span> <span style="font-size:14px;color:var(--gray-600);">per year</span>`);
+    costHtml = lines.join("<br>");
+  } else if (info.annual) {
+    costHtml = `<span style="font-size:22px;font-weight:700;color:var(--nautilus-navy);">${info.annual}</span> <span style="font-size:14px;color:var(--gray-600);">per year</span>`;
   }
   return `<div class="outcome-card"><div class="badge">${info.branch} branch</div><h3>${info.name} membership</h3><p>${costHtml}</p></div>`;
 }
@@ -738,7 +742,7 @@ function renderPersonal() {
       <div class="field"><label>I live in / I'm a resident of… <span class="req">*</span></label><select data-crm="ResidentCountry" required>${COUNTRY_OPTIONS_HTML}</select><span class="error-msg">Required</span></div>
       <div class="form-row">
         <div class="field"><label>Your employer</label><input type="text" data-crm="Employer" autocomplete="organization" placeholder="Employer name"></div>
-        <div class="field"><label>Your rank</label><input type="text" data-crm="Rank" autocomplete="off" placeholder="Your rank"></div>
+        <div class="field"><label>Your rank</label><select data-crm="Rank" autocomplete="off"><option value="">Select…</option><option>Master</option><option>Chief Officer</option><option>Second Officer</option><option>Third Officer</option><option>Deck Officer</option><option>Chief Engineer</option><option>Second Engineer</option><option>Third Engineer</option><option>Fourth Engineer</option><option>Engineer Officer</option><option>Electro-Technical Officer</option><option>Radio Officer</option><option>Purser</option><option>Cadet</option><option>Bosun</option><option>AB (Able Seaman)</option><option>OS (Ordinary Seaman)</option><option>Motorman</option><option>Rating</option><option>Pilot</option><option>Harbourmaster</option><option>DPA</option><option>Trawler Officer</option><option>Yacht Captain</option><option>Yacht Officer</option><option>Yacht Crew</option><option>Shore-based</option><option>Other</option></select></div>
       </div>
       ${country === "UK" || country === "CH" ? `<div class="field" style="margin-top:8px;"><label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;"><input type="checkbox" id="reducedRateCheck" style="width:auto;"> Apply for reduced rate</label></div>
       <div id="reducedRateFields" style="display:none;">
@@ -781,6 +785,7 @@ function renderPayment() {
       </div>
       <div class="field"><label>IBAN</label><input type="text" data-crm="IBAN" autocomplete="off" placeholder="e.g. CH93 0076 2011 6238 5295 7"></div>
       <div class="field"><label>BIC / SWIFT</label><input type="text" data-crm="BIC" autocomplete="off" placeholder="e.g. UBSWCHZH80A"></div>
+      ${country === "CH" ? `<div class="field"><label>Currency <span class="req">*</span></label><select data-crm="BT_Currency" required><option value="">Select…</option><option value="CHF">Swiss Francs (CHF)</option><option value="EUR">Euros (EUR)</option></select><span class="error-msg">Required</span></div>` : ""}
       <div class="field"><label>Payment reference <span class="req">*</span></label><input type="text" data-crm="BT_Reference" autocomplete="off" placeholder="e.g. invoice or membership number" required><span class="error-msg">Required</span></div>`;
   }
 
@@ -792,6 +797,7 @@ function renderPayment() {
     <div class="section-heading">Payment method</div>
     <div class="pay-toggle">${toggleHtml}</div>
     <div class="form-grid">${payFields}
+      <div class="field"><label>Payment frequency <span class="req">*</span></label><select data-crm="PaymentFrequency" required><option value="">Select…</option><option value="monthly">Monthly</option><option value="6monthly">Six-monthly</option><option value="yearly">Yearly</option></select><span class="error-msg">Required</span></div>
       <div class="field"><label>Referral code</label><input type="text" data-crm="ReferralCode" autocomplete="off" placeholder="If you have one"></div>
     </div>
     <div class="field" style="margin-top:16px;"><label style="display:flex;align-items:flex-start;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" id="termsCheck" required style="width:auto;margin-top:3px;"> I agree to the <a href="${(TERMS_URLS[country] || TERMS_URLS.UK).url}" target="_blank" style="color:var(--nautilus-blue);">terms and conditions of ${(TERMS_URLS[country] || TERMS_URLS.UK).label} membership</a> <span class="req">*</span></label><span class="error-msg">You must accept the terms to continue</span></div>
@@ -830,7 +836,7 @@ function renderComplete() {
       <div class="field"><label>Employer</label><input type="text" data-crm="Employer" autocomplete="organization" placeholder="Your employer name"></div>
       <div class="form-row">
         <div class="field"><label>Ship</label><input type="text" data-crm="Ship" autocomplete="off" placeholder="Current vessel"></div>
-        <div class="field"><label>Rank</label><input type="text" data-crm="Rank" autocomplete="off" placeholder="Your rank"></div>
+        <div class="field"><label>Rank</label><select data-crm="Rank" autocomplete="off"><option value="">Select…</option><option>Master</option><option>Chief Officer</option><option>Second Officer</option><option>Third Officer</option><option>Deck Officer</option><option>Chief Engineer</option><option>Second Engineer</option><option>Third Engineer</option><option>Fourth Engineer</option><option>Engineer Officer</option><option>Electro-Technical Officer</option><option>Radio Officer</option><option>Purser</option><option>Cadet</option><option>Bosun</option><option>AB (Able Seaman)</option><option>OS (Ordinary Seaman)</option><option>Motorman</option><option>Rating</option><option>Pilot</option><option>Harbourmaster</option><option>DPA</option><option>Trawler Officer</option><option>Yacht Captain</option><option>Yacht Officer</option><option>Yacht Crew</option><option>Shore-based</option><option>Other</option></select></div>
       </div>`;
   }
   if (isStudying) {
@@ -851,7 +857,7 @@ function renderComplete() {
       <div class="field"><label>Gender</label><select data-crm="Gender" autocomplete="sex"><option value="">Select…</option><option>Male</option><option>Female</option><option>Non-binary</option><option>Prefer not to say</option></select></div>
     </div>
     <div class="field"><label>Salutation</label><select data-crm="Salutation"><option value="">Select…</option><option>Mr</option><option>Ms</option><option>Mrs</option><option>Mx</option><option>Captain</option><option>Commodore</option><option>Dr</option></select></div>
-    <div class="field"><label>Sector</label><select data-crm="Sector"><option value="">Select…</option><option>Merchant navy</option><option>Offshore</option><option>Yacht</option><option>Fishing</option><option>Ports &amp; harbours</option><option>Inland waterways</option><option>Pilotage</option><option>Other</option></select></div>`;
+    <div class="field"><label>Sector</label><select data-crm="Sector"><option value="">Select…</option><option>Merchant navy</option><option>Ocean-going cruise ships</option><option>Offshore</option><option>Yacht</option><option>Fishing</option><option>Ports &amp; harbours</option><option>Tugs</option><option>Inland waterways (cargo)</option><option>Inland waterways (river cruise)</option><option>Dredging</option><option>Locks</option><option>Pilotage</option><option>Other</option></select></div>`;
 
   let prefFields = `
     <div class="field"><label>How would you like us to contact you?</label><select data-crm="PreferredMethodofContact"><option value="">Select…</option><option>Any</option><option>Email</option><option>Phone</option><option>Post</option></select></div>

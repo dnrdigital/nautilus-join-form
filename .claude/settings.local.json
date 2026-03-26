@@ -11,7 +11,9 @@
       "Bash(git push:*)",
       "Bash(gh pr:*)",
       "Bash(git stash:*)",
-      "Bash(gh api:*)"
+      "Bash(gh api:*)",
+      "Bash(pandoc \"/Users/duncan/Downloads/Untitled document.docx\" -o /tmp/nautilus-notes.md)",
+      "Read(//tmp/**)"
     ]
   }
 }
