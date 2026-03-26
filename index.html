@@ -472,13 +472,13 @@ const QUESTIONS = {
     flow: "Working",
     question: "My employer is based…",
     options: [
-      { label: "In the UK", routesTo: "Q5" },
-      { label: "In the Netherlands", routesTo: "Q6" },
+      { label: "In the UK", routesTo: "Q4" },
+      { label: "In the Netherlands", routesTo: "Q5" },
       { label: "In Switzerland", outcome: "CH Employed member union fee" },
-      { label: "In another country", routesTo: "Q8" },
-      { label: "I'm not sure", routesTo: "Q8" },
+      { label: "In another country", routesTo: "Q6" },
+      { label: "I'm not sure", routesTo: "Q6" },
     ],
-    openQuestions: ["'In another country' and 'I'm not sure' both currently lead to the UK sea-role questions (Q8). Should either or both have their own unique pathways? Should they be combined into a single option?"]
+    openQuestions: ["'In another country' and 'I'm not sure' both currently lead to the UK sea-role questions (Q6). Should either or both have their own unique pathways? Should they be combined into a single option?"]
   },
   Q3: {
     flow: "Studying",
@@ -491,15 +491,15 @@ const QUESTIONS = {
     openQuestions: ["Need clarity: third option should be clear that the employment by a swiss company is the key factor, they could be learning abroad"]
 
   },
-  Q5: {
+  Q4: {
     flow: "Working for a UK employer",
     question: "Do you work…",
     options: [
-      { label: "At sea", routesTo: "Q8" },
+      { label: "At sea", routesTo: "Q6" },
       { label: "Ashore", routesTo: "Q9" },
     ]
   },
-  Q6: {
+  Q5: {
     flow: "Working for a Dutch employer",
     question: "Select the membership that applies to you:",
     options: [
@@ -507,7 +507,7 @@ const QUESTIONS = {
       { label: "I am 22 years old or younger", outcome: "NL 22 Years and Younger" },
     ]
   },
-  Q8: {
+  Q6: {
     flow: "Working at sea",
     question: "Select the membership that applies to you:",
     useFieldsets: true,
@@ -517,7 +517,7 @@ const QUESTIONS = {
         options: [
           { label: "Seagoing officer — certificated", note: "I have a valid management or operational CoC", outcome: "UK F1 membership" },
           { label: "Seagoing officer — uncertificated", note: "I am an uncertificated officer working onboard ships", outcome: "UK P1 membership" },
-          { label: "Pilot", outcome: "UK R1 membership" },
+          { label: "Pilot", outcome: "UK P1 membership" },
           { label: "Marine rating", outcome: "UK R1 membership" },
         ]
       },
