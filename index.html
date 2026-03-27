@@ -549,11 +549,11 @@ const MEMBERSHIP_INFO = {
   "UK Y1 membership": { branch: "United Kingdom", name: "Yacht officer", monthly: null, annual: "€405.00" },
   "UK Y2 membership": { branch: "United Kingdom", name: "Yacht crew", monthly: null, annual: "€275.00" },
   "UK C1 membership": { branch: "United Kingdom", name: "Cadet", monthly: null, annual: "£36.00" },
-  "NL 23 Years and Older": { branch: "Netherlands", name: "23 years and older", monthly: null, annual: null, tbc: true },
-  "NL 22 Years and Younger": { branch: "Netherlands", name: "22 years and younger", monthly: null, annual: null, tbc: true },
-  "NL Student membership": { branch: "Netherlands", name: "Student", monthly: null, annual: null, tbc: true },
-  "CH Employed member union fee": { branch: "Switzerland", name: "Employed ", monthly: null, annual: null, tbc: true },
-  "CH Apprentice fee": { branch: "Switzerland", name: "Apprentice", monthly: null, annual: null, tbc: true },
+  "NL 23 Years and Older": { branch: "Netherlands", name: "23 years and older", monthly: { dd: "€XX" }, annual: "€XX", note: "Actual figures to be added — check with NL branch" },
+  "NL 22 Years and Younger": { branch: "Netherlands", name: "22 years and younger", monthly: { dd: "€XX" }, annual: "€XX", note: "Actual figures to be added — check with NL branch" },
+  "NL Student membership": { branch: "Netherlands", name: "Student", monthly: { dd: "€XX" }, annual: "€XX", note: "Actual figures to be added — check with NL branch" },
+  "CH Employed member union fee": { branch: "Switzerland", name: "Employed", monthly: { dd: "CHF XX" }, annual: "CHF XX", note: "Actual figures to be added — check with CH branch" },
+  "CH Apprentice fee": { branch: "Switzerland", name: "Apprentice", monthly: { dd: "CHF XX" }, annual: "CHF XX", note: "Actual figures to be added — check with CH branch" },
 };
 
 const STEP_NAMES = ["Your situation", "Contact details", "Personal details", "Payment"];
@@ -717,9 +717,7 @@ function getOutcomeHtml() {
   const info = MEMBERSHIP_INFO[state.selectedOutcome];
   if (!info) return `<div class="outcome-card"><div class="badge">Your membership</div><h3>${state.selectedOutcome}</h3></div>`;
   let costHtml = "";
-  if (info.tbc) {
-    costHtml = `<span style="color:var(--gray-600);font-size:14px;">Fees to be confirmed by your branch.</span>`;
-  } else if (info.monthly) {
+  if (info.monthly) {
     let lines = [];
     if (info.monthly.dd) lines.push(`<span style="font-size:22px;font-weight:700;color:var(--nautilus-navy);">${info.monthly.dd}</span> <span style="font-size:14px;color:var(--gray-600);">per month (Direct Debit)</span>`);
     if (info.monthly.card) lines.push(`<span style="font-size:22px;font-weight:700;color:var(--nautilus-navy);">${info.monthly.card}</span> <span style="font-size:14px;color:var(--gray-600);">per month (Card)</span>`);
@@ -728,11 +726,15 @@ function getOutcomeHtml() {
   } else if (info.annual) {
     costHtml = `<span style="font-size:22px;font-weight:700;color:var(--nautilus-navy);">${info.annual}</span> <span style="font-size:14px;color:var(--gray-600);">per year</span>`;
   }
+  let noteHtml = "";
+  if (info.note) {
+    noteHtml = `<div style="margin-top:10px;padding:10px 14px;background:#f3edf7;border-left:3px solid #7b1fa2;border-radius:var(--radius);font-size:13px;color:#5e35b1;">⚠ ${info.note}</div>`;
+  }
   let swzHtml = "";
   if (state.swzOptIn && getCountryFromHistory() === "NL") {
     swzHtml = `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-200);"><span style="font-size:14px;color:var(--gray-600);">+ SWZ Maritime: </span><span style="font-weight:700;color:var(--nautilus-navy);">€3.95</span><span style="font-size:14px;color:var(--gray-600);"> per month</span></div>`;
   }
-  return `<div class="outcome-card"><div class="badge">${info.branch} branch</div><h3>${info.name} membership</h3><p>${costHtml}</p>${swzHtml}</div>`;
+  return `<div class="outcome-card"><div class="badge">${info.branch} branch</div><h3>${info.name} membership</h3><p>${costHtml}</p>${noteHtml}${swzHtml}</div>`;
 }
 
 function getBcHtml() {
@@ -783,12 +785,11 @@ function renderPersonal() {
       </div>
       ${state.selectedOutcome === "UK K1 membership" ? `<div style="margin-top:12px;padding:16px;background:var(--gray-50);border-radius:var(--radius);">
         <div style="font-weight:600;font-size:15px;margin-bottom:8px;">Reduced rate application</div>
-        <div class="field"><label>Supporting document</label><input type="file" data-crm="ReducedRateDoc" style="padding:8px 0;"></div>
         <div class="field"><label>Additional information</label><textarea data-crm="ReducedRateNotes" rows="3" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-family:inherit;font-size:15px;color:var(--gray-800);resize:vertical;" placeholder="Please provide any details to support your application"></textarea></div>
       </div>` : ``}
-      ${country === "CH" ? `<div class="field" style="margin-top:8px;"><label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;"><input type="checkbox" id="reducedRateCheck" style="width:auto;"> Apply for reduced rate</label></div>
+      ${country === "CH" ? `<p style="margin-top:12px;font-size:14px;color:var(--gray-600);">If your salary is under CHF 2,500/month, you can apply for a reduced rate. We'll review your claim and ask you to supply evidence.</p>
+      <div class="field" style="margin-top:8px;"><label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;"><input type="checkbox" id="reducedRateCheck" style="width:auto;"> Apply for reduced rate</label></div>
       <div id="reducedRateFields" style="display:none;">
-        <div class="field" style="margin-top:12px;"><label>Supporting document</label><input type="file" data-crm="ReducedRateDoc" style="padding:8px 0;"></div>
         <div class="field"><label>Additional information</label><textarea data-crm="ReducedRateNotes" rows="3" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-family:inherit;font-size:15px;color:var(--gray-800);resize:vertical;" placeholder="Please provide any details to support your application"></textarea></div>
       </div>` : ``}
     </div>
