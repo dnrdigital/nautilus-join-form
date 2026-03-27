@@ -397,7 +397,11 @@
     font-size: 11px; font-weight: 700; text-transform: uppercase;
     letter-spacing: 0.06em; color: var(--gray-400); margin: 16px 0 8px;
   }
-  .crm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .crm-grid { display: flex; justify-content: space-between; flex-direction: column; gap: 2; }
+  .crm-row { display: flex; gap: 2px; }
+  .crm-grid:nth-child(odd) { background: var(--gray-50); }
+  .crm-row .crm-field { flex: 1; }
+  .crm-group-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--nautilus-blue); margin: 12px 0 4px; padding-left: 10px; }
   .crm-field {
     display: flex; align-items: baseline; gap: 8px;
     padding: 6px 10px; border-radius: 3px; font-size: 13px;
@@ -413,7 +417,7 @@
   @media (max-width: 700px) {
     .member-body { flex-direction: column; }
     .quicklinks { width: 100%; }
-    .crm-grid { grid-template-columns: 1fr; }
+    .crm-row { flex-direction: column; }
   }
 
   @media (max-width: 480px) {
@@ -437,9 +441,9 @@
   <span class="demo-tag">Prototype</span>
 </div>
 
-<div class="hero-banner">
-  <h1>Join online</h1>
-  <p>Select from our online specialist membership packages whatever your sector.</p>
+<div class="hero-banner" id="heroBanner">
+  <h1 id="heroTitle">Join online</h1>
+  <p id="heroSubtitle">Select from our online specialist membership packages whatever your sector.</p>
 </div>
 
 <div class="step-bar"><div class="step-bar-inner" id="stepBar"></div></div>
@@ -545,8 +549,8 @@ const MEMBERSHIP_INFO = {
   "UK Y1 membership": { branch: "United Kingdom", name: "Yacht officer", monthly: null, annual: "€405.00" },
   "UK Y2 membership": { branch: "United Kingdom", name: "Yacht crew", monthly: null, annual: "€275.00" },
   "UK C1 membership": { branch: "United Kingdom", name: "Cadet", monthly: null, annual: "£36.00" },
-  "NL 23 Years and Older": { branch: "Netherlands", name: "Member (23 years and older)", monthly: null, annual: null, tbc: true },
-  "NL 22 Years and Younger": { branch: "Netherlands", name: "Member (22 years and younger)", monthly: null, annual: null, tbc: true },
+  "NL 23 Years and Older": { branch: "Netherlands", name: "23 years and older", monthly: null, annual: null, tbc: true },
+  "NL 22 Years and Younger": { branch: "Netherlands", name: "22 years and younger", monthly: null, annual: null, tbc: true },
   "NL Student membership": { branch: "Netherlands", name: "Student", monthly: null, annual: null, tbc: true },
   "CH Employed member union fee": { branch: "Switzerland", name: "Employed ", monthly: null, annual: null, tbc: true },
   "CH Apprentice fee": { branch: "Switzerland", name: "Apprentice", monthly: null, annual: null, tbc: true },
@@ -554,10 +558,11 @@ const MEMBERSHIP_INFO = {
 
 const STEP_NAMES = ["Your situation", "Contact details", "Personal details", "Payment"];
 
-let state = { history: [], currentQ: "Q1", selectedOutcome: null, unclearOutcome: null, phase: "questions", payMethod: null, formData: {} };
+let state = { history: [], currentQ: "Q1", selectedOutcome: null, unclearOutcome: null, phase: "questions", payMethod: null, formData: {}, swzOptIn: false };
 
 function getStepIndex() {
   if (state.phase === "complete") return 3;
+  if (state.phase === "interstitial") return 3;
   if (state.phase === "payment") return 3;
   if (state.phase === "personal") return 2;
   if (state.phase === "contact") return 1;
@@ -582,14 +587,19 @@ function render() {
   const app = document.getElementById("app");
   const container = document.getElementById("app");
   // Widen for member area
+  const isMemberArea = state.phase === "complete" || state.phase === "interstitial";
   container.style.maxWidth = state.phase === "complete" ? "860px" : "640px";
-  // Hide step bar on complete
-  document.getElementById("stepBar").parentElement.style.display = state.phase === "complete" ? "none" : "";
+  // Hide step bar on interstitial and complete
+  document.getElementById("stepBar").parentElement.style.display = isMemberArea ? "none" : "";
+  // Update hero banner
+  document.getElementById("heroTitle").textContent = isMemberArea ? "Website member area" : "Join online";
+  document.getElementById("heroSubtitle").textContent = isMemberArea ? "Update your profile to see personalised content" : "Select from our online specialist membership packages whatever your sector.";
   if (state.phase === "questions") app.innerHTML = renderQuestion();
   else if (state.phase === "unclear") app.innerHTML = renderUnclear();
   else if (state.phase === "contact") app.innerHTML = renderContact();
   else if (state.phase === "personal") app.innerHTML = renderPersonal();
   else if (state.phase === "payment") app.innerHTML = renderPayment();
+  else if (state.phase === "interstitial") app.innerHTML = renderInterstitial();
   else app.innerHTML = renderComplete();
   bindEvents();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -699,7 +709,11 @@ function getOutcomeHtml() {
   } else if (info.annual) {
     costHtml = `<span style="font-size:22px;font-weight:700;color:var(--nautilus-navy);">${info.annual}</span> <span style="font-size:14px;color:var(--gray-600);">per year</span>`;
   }
-  return `<div class="outcome-card"><div class="badge">${info.branch} branch</div><h3>${info.name} membership</h3><p>${costHtml}</p></div>`;
+  let swzHtml = "";
+  if (state.swzOptIn && getCountryFromHistory() === "NL") {
+    swzHtml = `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-200);"><span style="font-size:14px;color:var(--gray-600);">+ SWZ Maritime: </span><span style="font-weight:700;color:var(--nautilus-navy);">€3.95</span><span style="font-size:14px;color:var(--gray-600);"> per month</span></div>`;
+  }
+  return `<div class="outcome-card"><div class="badge">${info.branch} branch</div><h3>${info.name} membership</h3><p>${costHtml}</p>${swzHtml}</div>`;
 }
 
 function getBcHtml() {
@@ -748,7 +762,12 @@ function renderPersonal() {
         <div class="field"><label>Your employer</label><input type="text" data-crm="Employer" autocomplete="organization" placeholder="Employer name"></div>
         <div class="field"><label>Your rank</label><select data-crm="Rank" autocomplete="off"><option value="">Select…</option><option>Master</option><option>Chief Officer</option><option>Second Officer</option><option>Third Officer</option><option>Deck Officer</option><option>Chief Engineer</option><option>Second Engineer</option><option>Third Engineer</option><option>Fourth Engineer</option><option>Engineer Officer</option><option>Electro-Technical Officer</option><option>Radio Officer</option><option>Purser</option><option>Cadet</option><option>Bosun</option><option>AB (Able Seaman)</option><option>OS (Ordinary Seaman)</option><option>Motorman</option><option>Rating</option><option>Pilot</option><option>Harbourmaster</option><option>DPA</option><option>Trawler Officer</option><option>Yacht Captain</option><option>Yacht Officer</option><option>Yacht Crew</option><option>Shore-based</option><option>Other</option></select></div>
       </div>
-      ${country === "UK" || country === "CH" ? `<div class="field" style="margin-top:8px;"><label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;"><input type="checkbox" id="reducedRateCheck" style="width:auto;"> Apply for reduced rate</label></div>
+      ${state.selectedOutcome === "UK K1 membership" ? `<div style="margin-top:12px;padding:16px;background:var(--gray-50);border-radius:var(--radius);">
+        <div style="font-weight:600;font-size:15px;margin-bottom:8px;">Reduced rate application</div>
+        <div class="field"><label>Supporting document</label><input type="file" data-crm="ReducedRateDoc" style="padding:8px 0;"></div>
+        <div class="field"><label>Additional information</label><textarea data-crm="ReducedRateNotes" rows="3" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-family:inherit;font-size:15px;color:var(--gray-800);resize:vertical;" placeholder="Please provide any details to support your application"></textarea></div>
+      </div>` : ``}
+      ${country === "CH" ? `<div class="field" style="margin-top:8px;"><label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;"><input type="checkbox" id="reducedRateCheck" style="width:auto;"> Apply for reduced rate</label></div>
       <div id="reducedRateFields" style="display:none;">
         <div class="field" style="margin-top:12px;"><label>Supporting document</label><input type="file" data-crm="ReducedRateDoc" style="padding:8px 0;"></div>
         <div class="field"><label>Additional information</label><textarea data-crm="ReducedRateNotes" rows="3" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-family:inherit;font-size:15px;color:var(--gray-800);resize:vertical;" placeholder="Please provide any details to support your application"></textarea></div>
@@ -804,17 +823,68 @@ function renderPayment() {
       <div class="field"><label>Payment frequency <span class="req">*</span></label><select data-crm="PaymentFrequency" required><option value="">Select…</option><option value="monthly">Monthly</option><option value="6monthly">Six-monthly</option><option value="yearly">Yearly</option></select><span class="error-msg">Required</span></div>
       <div class="field"><label>Referral code</label><input type="text" data-crm="ReferralCode" autocomplete="off" placeholder="If you have one"></div>
     </div>
+    ${country === "NL" ? `<div style="margin-top:16px;padding:16px;background:var(--gray-50);border-radius:var(--radius);">
+      <div style="font-weight:600;font-size:15px;margin-bottom:8px;">Publications</div>
+      <div class="field" style="margin-bottom:8px;"><label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" id="nlTelegraph" data-crm="Telegraph" style="width:auto;"> Physical copy of Telegraph</label></div>
+      <div class="field"><label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" id="nlSWZ" data-crm="SWZ" style="width:auto;"> Physical copy of SWZ Maritime — additional €3.95 per month</label></div>
+    </div>` : ""}
+    <div style="margin-top:16px;padding:16px;background:var(--gray-50);border-radius:var(--radius);">
+      <div class="field"><label style="display:flex;align-items:flex-start;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" data-crm="NautilusPlus" style="width:auto;margin-top:3px;"> <span>On top of the familiar benefits of trade union membership, Nautilus has negotiated a range of deals and/or discounts on the services and products that members use most often. Would you like to receive information about these benefits?</span></label></div>
+      <div class="field" style="margin-top:8px;"><label style="display:flex;align-items:flex-start;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" data-crm="ThirdPartyMarketing" style="width:auto;margin-top:3px;"> <span>Are you happy to receive marketing material from selected third parties?</span></label></div>
+    </div>
     <div class="field" style="margin-top:16px;"><label style="display:flex;align-items:flex-start;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" id="termsCheck" required style="width:auto;margin-top:3px;"> I agree to the <a href="${(TERMS_URLS[country] || TERMS_URLS.UK).url}" target="_blank" style="color:var(--nautilus-blue);">terms and conditions of ${(TERMS_URLS[country] || TERMS_URLS.UK).label} membership</a> <span class="req">*</span></label><span class="error-msg">You must accept the terms to continue</span></div>
     <div class="btn-row"><button class="btn-back" id="backBtn">← Previous</button><button class="btn-primary" id="payBtn">Join &amp; pay</button></div>
   </div>`;
 }
 
 
+function renderInterstitial() {
+  const payMethod = state.formData._payMethod || state.payMethod;
+  const isBankTransfer = payMethod === "bt";
+  const firstName = state.formData.FirstName || "";
+
+  if (isBankTransfer) {
+    return `<div class="card" style="text-align:center;padding:48px 32px;">
+      ${getBcHtml()}
+      <div style="font-size:48px;margin-bottom:16px;">✉️</div>
+      <h2 style="color:var(--nautilus-navy);margin-bottom:12px;">Thank you${firstName ? ', ' + firstName : ''}!</h2>
+      <p style="font-size:16px;color:var(--gray-600);max-width:500px;margin:0 auto 24px;">Your membership application has been received. As you've chosen to pay by bank transfer, our membership team will be in touch with payment details and to confirm your membership.</p>
+      <div style="background:var(--gray-50);border-radius:var(--radius);padding:20px;max-width:400px;margin:0 auto 24px;">
+        <div style="font-weight:600;margin-bottom:8px;">What happens next?</div>
+        <div style="font-size:14px;color:var(--gray-600);text-align:left;">
+          <div style="margin-bottom:8px;">1. You'll receive a confirmation email shortly</div>
+          <div style="margin-bottom:8px;">2. The membership team will send you bank transfer details</div>
+          <div>3. Once payment is received, your membership will be activated</div>
+        </div>
+      </div>
+      <p style="font-size:14px;color:var(--gray-500);">Membership pending — you'll have full access once payment is confirmed.</p>
+      <div style="margin-top:24px;"><button class="btn-restart" id="restartBtn">Restart demo</button></div>
+    </div>
+    <div class="crm-panel" id="crmPanel" style="max-width:800px;margin:32px auto 0;">
+      <div class="crm-panel-header">
+        <span class="crm-badge">CRM</span>
+        <h4>Member record</h4>
+        <p>Below the line — not shown to user. Updates live as profile is completed.</p>
+      </div>
+    </div>`;
+  }
+
+  // Non-bank-transfer: show interstitial then member area
+  return `<div class="card" style="text-align:center;padding:48px 32px;">
+    ${getBcHtml()}
+    <div style="font-size:48px;margin-bottom:16px;">🎉</div>
+    <h2 style="color:var(--nautilus-navy);margin-bottom:12px;">Welcome to Nautilus${firstName ? ', ' + firstName : ''}!</h2>
+    <p style="font-size:16px;color:var(--gray-600);max-width:500px;margin:0 auto 24px;">Your membership is now active. You can update your profile below to see personalised content, news and resources.</p>
+    <button class="btn-primary" id="continueToProfile">Continue to member area →</button>
+  </div>`;
+}
+
 function renderComplete() {
   const sit = state.history.length && state.history[0].chosenIndex !== undefined
     ? QUESTIONS.Q1.options[state.history[0].chosenIndex].label : "";
   const isWorking = sit === "Working";
   const isStudying = sit === "Studying";
+  const isAtSea = state.history.some(h => h.questionId === "Q4" && QUESTIONS.Q4.options[h.chosenIndex] && QUESTIONS.Q4.options[h.chosenIndex].label === "At sea");
 
   let branch = "—"; let contractLocation = "—";
   if (state.history.length >= 2) {
@@ -839,17 +909,21 @@ function renderComplete() {
     profileFields += `
       <div class="field"><label>Employer</label><input type="text" data-crm="Employer" autocomplete="organization" placeholder="Your employer name"></div>
       <div class="form-row">
-        <div class="field"><label>Ship</label><input type="text" data-crm="Ship" autocomplete="off" placeholder="Current vessel"></div>
+        ${isAtSea ? `<div class="field"><label>Ship</label><input type="text" data-crm="Ship" autocomplete="off" placeholder="Current vessel"></div>` : ""}
         <div class="field"><label>Rank</label><select data-crm="Rank" autocomplete="off"><option value="">Select…</option><option>Master</option><option>Chief Officer</option><option>Second Officer</option><option>Third Officer</option><option>Deck Officer</option><option>Chief Engineer</option><option>Second Engineer</option><option>Third Engineer</option><option>Fourth Engineer</option><option>Engineer Officer</option><option>Electro-Technical Officer</option><option>Radio Officer</option><option>Purser</option><option>Cadet</option><option>Bosun</option><option>AB (Able Seaman)</option><option>OS (Ordinary Seaman)</option><option>Motorman</option><option>Rating</option><option>Pilot</option><option>Harbourmaster</option><option>DPA</option><option>Trawler Officer</option><option>Yacht Captain</option><option>Yacht Officer</option><option>Yacht Crew</option><option>Shore-based</option><option>Other</option></select></div>
-      </div>`;
+      </div>
+      <div class="field"><label>Salary</label><input type="text" data-crm="Salary" autocomplete="off" placeholder="Annual salary"></div>`;
   }
   if (isStudying) {
     profileFields += `
-      <div class="field"><label>Learning institution</label><input type="text" data-crm="LearningInstitution" autocomplete="organization" placeholder="Name of your college or training provider"></div>
+      <div class="field"><label>Learning institution</label><input type="text" data-crm="LearningInstitution" autocomplete="organization" placeholder="Name of your college or training provider"></div>`;
+    if (contractLocation === "UK" || contractLocation === "NL") {
+      profileFields += `
       <div class="form-row">
         <div class="field"><label>Cadet start date</label><input type="date" data-crm="CadetStartDate"></div>
         <div class="field"><label>Cadet end date</label><input type="date" data-crm="CadetEndDate"></div>
       </div>`;
+    }
   }
   profileFields += `
     <div class="form-row">
@@ -864,11 +938,14 @@ function renderComplete() {
     <div class="field"><label>Sector</label><select data-crm="Sector"><option value="">Select…</option><option>Merchant navy</option><option>Ocean-going cruise ships</option><option>Offshore</option><option>Yacht</option><option>Fishing</option><option>Ports &amp; harbours</option><option>Tugs</option><option>Inland waterways (cargo)</option><option>Inland waterways (river cruise)</option><option>Dredging</option><option>Locks</option><option>Pilotage</option><option>Other</option></select></div>`;
 
   let prefFields = `
-    <div class="field"><label>How would you like us to contact you?</label><select data-crm="PreferredMethodofContact"><option value="">Select…</option><option>Any</option><option>Email</option><option>Phone</option><option>Post</option></select></div>
-    <div class="form-row">
-      <div class="field"><label>Send marketing material?</label><select data-crm="SendMarketingMaterial"><option value="">Select…</option><option value="true">Yes</option><option value="false">No</option></select></div>
-      <div class="field"><label>Third party marketing?</label><select data-crm="ThirdPartyMarketing"><option value="">Select…</option><option value="Subscribe">Yes</option><option value="Unsubscribe">No</option></select></div>
-    </div>`;
+    <div style="font-weight:600;font-size:15px;margin-bottom:8px;">How would you like us to contact you?</div>
+    <div class="form-row" style="margin-bottom:12px;">
+      <div class="field"><label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" data-crm="ContactEmail" checked style="width:auto;"> Email</label></div>
+      <div class="field"><label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" data-crm="ContactPhone" checked style="width:auto;"> Phone</label></div>
+      <div class="field"><label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" data-crm="ContactMail" checked style="width:auto;"> Post</label></div>
+    </div>
+    <div class="field"><label>Preferred method of contact</label><select data-crm="PreferredMethodofContact"><option value="">Select…</option><option>Any</option><option>Email</option><option>Phone</option><option>Post</option></select></div>
+    <div class="field" style="margin-top:12px;"><label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" data-crm="SendMarketingMaterial" checked style="width:auto;"> Send me marketing material from Nautilus</label></div>`;
 
   const firstName = state.formData.FirstName || "";
   const lastName = state.formData.LastName || "";
@@ -905,7 +982,7 @@ function renderComplete() {
 
     <div class="card" style="margin-top:20px;">
       <div class="section-heading">Complete your profile</div>
-      <p style="font-size:14px;color:var(--gray-600);margin-bottom:20px;">Help us tailor your membership experience. You can fill these in now or come back any time.</p>
+      <p style="font-size:14px;color:var(--gray-600);margin-bottom:20px;">Update your profile to see personalised content.</p>
       <div class="form-grid" id="profileForm">${profileFields}</div>
       <div class="section-heading" style="margin-top:28px;">Communication preferences</div>
       <div class="form-grid">${prefFields}</div>
@@ -953,6 +1030,7 @@ function updateCrmPanel() {
   // Read a value: first check live form field, then saved formData
   function v(key) {
     const el = document.querySelector('[data-crm="' + key + '"]');
+    if (el && el.type === "checkbox") return el.checked ? "true" : "";
     if (el && el.value.trim()) return el.value.trim();
     return state.formData[key] || "";
   }
@@ -978,36 +1056,41 @@ function updateCrmPanel() {
     return "•".repeat(val.length - show) + val.slice(-show);
   }
 
-  // Person fields (per CRM spreadsheet)
-  const personHtml = [
-    f("Id", "", "Internal only"),
-    f("FirstName", v("FirstName"), "Join form"), f("MiddleName", v("MiddleName"), "Join form"), f("LastName", v("LastName"), "Join form"),
-    f("NationalityId", "", "Internal only"), f("Nationality", v("Nationality"), "Profile form"),
-    f("Birthday", v("Birthday"), "Profile form"), f("PlaceOfBirth", v("PlaceOfBirth"), "Profile form"),
-    f("Gender", v("Gender"), "Profile form"), f("Salutation", v("Salutation"), "Join form"),
-    f("Address1Phone", v("Address1Phone"), "Profile form"), f("MobilePhone", v("MobilePhone"), "Join form"), f("Email", v("Email"), "Join form"),
-    f("Address1Street1", v("Address1Street1"), "Join form"), f("Address1Street2", v("Address1Street2"), "Join form"),
-    f("Address1County", v("Address1County"), "Join form"), f("Address1City", v("Address1City"), "Join form"),
-    f("Address1PostCode", v("Address1PostCode"), "Join form"), f("Address1CountryRegion", v("Address1CountryRegion"), "Join form"),
-    f("EmployerId", "", "Internal only"), f("Employer", v("Employer"), "Join form"),
-    f("Contract location", contractLocation, "Join form"),
-    f("ShipId", "", "Internal only"), f("Ship", v("Ship"), "Profile form"),
-    f("CadetStartDate", v("CadetStartDate"), "Profile form"), f("CadetEndDate", v("CadetEndDate"), "Profile form"),
-    f("DischargeBookNumber", "", "Internal only"),
-    f("RankId", "", "Internal only"), f("Rank", v("Rank"), "Join form"),
-    f("BACSWeek", "", "Internal only"),
-    f("ClassId", state.selectedOutcome || "", "Join form"), f("Branch", branch, "Join form"),
-    f("PreferredMethodofContact", v("PreferredMethodofContact"), "Profile form"),
-    f("DepartmentId", "", "Internal only"),
-    f("SWZ", "", "Profile form"), f("Telegraph", "", "Profile form"),
-    f("Sector", v("Sector"), "Profile form"),
-  ].join("");
+  // Person fields grouped logically (max 2 per row)
+  function row(a, b) { return '<div class="crm-row">' + a + (b || '') + '</div>'; }
+  const personHtml =
+    '<div class="crm-group-label">Identity</div>' +
+    row(f("Id", "", "Internal only"), f("Salutation", v("Salutation"), "Join form")) +
+    row(f("FirstName", v("FirstName"), "Join form"), f("MiddleName", v("MiddleName"), "Join form")) +
+    row(f("LastName", v("LastName"), "Join form"), f("Gender", v("Gender"), "Profile form")) +
+    row(f("Birthday", v("Birthday"), "Profile form"), f("PlaceOfBirth", v("PlaceOfBirth"), "Profile form")) +
+    row(f("NationalityId", "", "Internal only"), f("Nationality", v("Nationality"), "Profile form")) +
+    '<div class="crm-group-label">Contact</div>' +
+    row(f("Email", v("Email"), "Join form"), f("MobilePhone", v("MobilePhone"), "Join form")) +
+    row(f("Address1Phone", v("Address1Phone"), "Profile form")) +
+    '<div class="crm-group-label">Address</div>' +
+    row(f("Address1Street1", v("Address1Street1"), "Join form"), f("Address1Street2", v("Address1Street2"), "Join form")) +
+    row(f("Address1City", v("Address1City"), "Join form"), f("Address1County", v("Address1County"), "Join form")) +
+    row(f("Address1PostCode", v("Address1PostCode"), "Join form"), f("Address1CountryRegion", v("Address1CountryRegion"), "Join form")) +
+    '<div class="crm-group-label">Employment</div>' +
+    row(f("EmployerId", "", "Internal only"), f("Employer", v("Employer"), "Join form")) +
+    row(f("RankId", "", "Internal only"), f("Rank", v("Rank"), "Join form")) +
+    row(f("ShipId", "", "Internal only"), f("Ship", v("Ship"), "Profile form")) +
+    row(f("Sector", v("Sector"), "Profile form"), f("Contract location", contractLocation, "Join form")) +
+    row(f("CadetStartDate", v("CadetStartDate"), "Profile form"), f("CadetEndDate", v("CadetEndDate"), "Profile form")) +
+    row(f("DischargeBookNumber", "", "Internal only")) +
+    '<div class="crm-group-label">Membership</div>' +
+    row(f("ClassId", state.selectedOutcome || "", "Join form"), f("Branch", branch, "Join form")) +
+    row(f("DepartmentId", "", "Internal only"), f("BACSWeek", "", "Internal only")) +
+    '<div class="crm-group-label">Preferences</div>' +
+    row(f("PreferredMethodofContact", v("PreferredMethodofContact"), "Profile form")) +
+    row(f("SWZ", v("SWZ"), "Join form"), f("Telegraph", v("Telegraph"), "Join form"));
 
   // ContactMethods (per CRM spreadsheet)
   const contactHtml = [
-    f("Email", "", "Profile form"), f("Phone", "", "Profile form"), f("Mail", "", "Profile form"),
+    f("Email", v("ContactEmail"), "Profile form"), f("Phone", v("ContactPhone"), "Profile form"), f("Mail", v("ContactMail"), "Profile form"),
     f("SendMarketingMaterial", v("SendMarketingMaterial"), "Profile form"),
-    f("NautilusPlus", "", "Profile form"), f("ThirdPartyMarketing", v("ThirdPartyMarketing"), "Profile form"),
+    f("NautilusPlus", v("NautilusPlus"), "Join form"), f("ThirdPartyMarketing", v("ThirdPartyMarketing"), "Join form"),
     f("ValidAccess", "", "Internal only"),
     f("TotalUnpaidAmountContinuous", "", "Internal only"),
   ].join("");
@@ -1017,7 +1100,7 @@ function updateCrmPanel() {
   const payLabel = payMethod === "dd" ? "ContinuousDirectDebit" : payMethod === "bt" ? "BankTransfer" : "ContinuousCreditDebitcard";
   let payArr = [
     f("PaymentMethod", payLabel, "Join form"), f("PaymentFrequency", v("PaymentFrequency"), "Join form"),
-    f("IsEuropeSubscription", "", "Internal only"), f("Salary", "", "Internal only"), f("Functie", "", "Internal only"),
+    f("IsEuropeSubscription", "", "Internal only"), f("Salary", v("Salary"), "Profile form"), f("Functie", "", "Internal only"),
     f("BACSWeek", "", "Internal only"),
     f("Accountname", v("Accountname"), "Join form"),
     f("Accountnumber", mask(state.formData.Accountnumber || "", 2), "Join form"),
@@ -1059,23 +1142,22 @@ function bindEvents() {
   const back = document.getElementById("backBtn");
   if (back) back.addEventListener("click", goBack);
   function validateAndProceed(nextPhase) {
-    // TODO: RE-ENABLE VALIDATION BEFORE PUSHING TO LIVE
-    // document.querySelectorAll(".field.has-error").forEach(f => f.classList.remove("has-error"));
-    // let valid = true;
-    // document.querySelectorAll("[required]").forEach(el => {
-    //   const empty = el.type === "checkbox" ? !el.checked : !el.value.trim();
-    //   if (empty) {
-    //     el.closest(".field").classList.add("has-error");
-    //     valid = false;
-    //   }
-    // });
-    // if (!valid) {
-    //   const first = document.querySelector(".field.has-error input, .field.has-error select");
-    //   if (first) first.focus();
-    //   return;
-    // }
+    document.querySelectorAll(".field.has-error").forEach(f => f.classList.remove("has-error"));
+    let valid = true;
+    document.querySelectorAll("[required]").forEach(el => {
+      const empty = el.type === "checkbox" ? !el.checked : !el.value.trim();
+      if (empty) {
+        el.closest(".field").classList.add("has-error");
+        valid = false;
+      }
+    });
+    if (!valid) {
+      const first = document.querySelector(".field.has-error input, .field.has-error select");
+      if (first) first.focus();
+      return;
+    }
     saveFormFields();
-    if (nextPhase === "complete") state.formData._payMethod = state.payMethod;
+    if (nextPhase === "interstitial") state.formData._payMethod = state.payMethod;
     state.phase = nextPhase; render();
   }
   const next = document.getElementById("nextBtn");
@@ -1084,11 +1166,20 @@ function bindEvents() {
     else if (state.phase === "personal") validateAndProceed("payment");
   });
   const pay = document.getElementById("payBtn");
-  if (pay) pay.addEventListener("click", () => validateAndProceed("complete"));
+  if (pay) pay.addEventListener("click", () => validateAndProceed("interstitial"));
   const reducedCheck = document.getElementById("reducedRateCheck");
   if (reducedCheck) reducedCheck.addEventListener("change", () => {
     document.getElementById("reducedRateFields").style.display = reducedCheck.checked ? "block" : "none";
   });
+  const nlSWZ = document.getElementById("nlSWZ");
+  if (nlSWZ) {
+    nlSWZ.checked = state.swzOptIn;
+    nlSWZ.addEventListener("change", () => {
+      state.swzOptIn = nlSWZ.checked;
+      const card = document.querySelector(".outcome-card");
+      if (card) card.outerHTML = getOutcomeHtml();
+    });
+  }
   ["dd", "cc", "bt"].forEach(key => {
     const btn = document.getElementById("toggle_" + key);
     if (btn) btn.addEventListener("click", () => {
@@ -1096,9 +1187,13 @@ function bindEvents() {
       state.payMethod = key; render();
     });
   });
+  const continueBtn = document.getElementById("continueToProfile");
+  if (continueBtn) continueBtn.addEventListener("click", () => {
+    state.phase = "complete"; render();
+  });
   const re = document.getElementById("restartBtn");
   if (re) re.addEventListener("click", () => {
-    state = { history:[], currentQ:"Q1", selectedOutcome:null, unclearOutcome:null, phase:"questions", payMethod:null, formData:{} };
+    state = { history:[], currentQ:"Q1", selectedOutcome:null, unclearOutcome:null, phase:"questions", payMethod:null, formData:{}, swzOptIn:false };
     render();
   });
   // Live CRM updates on member profile page
@@ -1109,7 +1204,10 @@ function bindEvents() {
   // Restore saved form data into fields
   document.querySelectorAll("[data-crm]").forEach(el => {
     const key = el.getAttribute("data-crm");
-    if (state.formData[key] && !el.value) el.value = state.formData[key];
+    if (state.formData[key] !== undefined) {
+      if (el.type === "checkbox") { el.checked = state.formData[key] === "true"; }
+      else if (!el.value) { el.value = state.formData[key]; }
+    }
   });
   // Clear error on input
   document.querySelectorAll("[required]").forEach(el => {
@@ -1117,7 +1215,7 @@ function bindEvents() {
     el.addEventListener(evt, () => el.closest(".field").classList.remove("has-error"));
   });
   // Initial CRM render
-  if (state.phase === "complete") updateCrmPanel();
+  if (state.phase === "complete" || state.phase === "interstitial") updateCrmPanel();
 }
 
 function handleChoice(idx) {
@@ -1151,7 +1249,9 @@ function resolveOption(opt) {
 
 function saveFormFields() {
   document.querySelectorAll("[data-crm]").forEach(el => {
-    if (el.value.trim()) state.formData[el.getAttribute("data-crm")] = el.value.trim();
+    const key = el.getAttribute("data-crm");
+    if (el.type === "checkbox") { state.formData[key] = el.checked ? "true" : "false"; }
+    else if (el.value.trim()) { state.formData[key] = el.value.trim(); }
   });
 }
 
