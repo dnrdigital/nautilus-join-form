@@ -558,6 +558,22 @@ const MEMBERSHIP_INFO = {
 
 const STEP_NAMES = ["Your situation", "Contact details", "Personal details", "Payment"];
 
+// ─── DROPDOWN OPTIONS (centralised for diagram/CRM sync) ───
+const SALUTATION_OPTIONS = ["Mr", "Ms", "Mrs", "Mx", "Captain", "Commodore", "Dr"];
+const RANK_OPTIONS = ["Master", "Chief Officer", "Second Officer", "Third Officer", "Deck Officer", "Chief Engineer", "Second Engineer", "Third Engineer", "Fourth Engineer", "Engineer Officer", "Electro-Technical Officer", "Radio Officer", "Purser", "Cadet", "Bosun", "AB (Able Seaman)", "OS (Ordinary Seaman)", "Motorman", "Rating", "Pilot", "Harbourmaster", "DPA", "Trawler Officer", "Yacht Captain", "Yacht Officer", "Yacht Crew", "Shore-based", "Other"];
+const GENDER_OPTIONS = ["Male", "Female", "Non-binary", "Prefer not to say"];
+const SECTOR_OPTIONS = ["Merchant navy", "Ocean-going cruise ships", "Offshore", "Yacht", "Fishing", "Ports &amp; harbours", "Tugs", "Inland waterways (cargo)", "Inland waterways (river cruise)", "Dredging", "Locks", "Pilotage", "Other"];
+const PAYMENT_FREQUENCY_OPTIONS = [{ value: "monthly", label: "Monthly" }, { value: "6monthly", label: "Six-monthly" }, { value: "yearly", label: "Yearly" }];
+const CURRENCY_OPTIONS = [{ value: "CHF", label: "Swiss Francs (CHF)" }, { value: "EUR", label: "Euros (EUR)" }];
+const CONTACT_METHOD_OPTIONS = ["Any", "Email", "Phone", "Post"];
+const MEMBER_TABS = ["Overview", "News", "Campaigns &amp; Events", "Courses", "Resources", "Jobs", "Perks &amp; Benefits", "Retirement", "History", "Sign out →"];
+
+// Helper: build <option> list from array
+function optionsHtml(arr, valueKey) {
+  if (valueKey) return arr.map(o => `<option value="${o[valueKey]}">${o.label}</option>`).join("");
+  return arr.map(o => `<option>${o}</option>`).join("");
+}
+
 let state = { history: [], currentQ: "Q1", selectedOutcome: null, unclearOutcome: null, phase: "questions", payMethod: null, formData: {}, swzOptIn: false };
 
 function getStepIndex() {
@@ -683,11 +699,14 @@ const TERMS_URLS = {
   CH: { label: "Switzerland", url: "https://www.nautilusint.org/en/ch-terms-and-conditions/" },
 };
 
+const PAYMENT_TABS_BY_COUNTRY = {
+  UK: [{ key: "dd", label: "Direct Debit" }, { key: "cc", label: "Credit / Debit card" }],
+  NL: [{ key: "dd", label: "Direct Debit" }, { key: "cc", label: "Credit / Debit card" }, { key: "bt", label: "Bank Transfer" }],
+  CH: [{ key: "bt", label: "Bank Transfer" }],
+  _default: [{ key: "dd", label: "Direct Debit" }, { key: "cc", label: "Credit / Debit card" }],
+};
 function getPaymentTabsForCountry(country) {
-  if (country === "UK") return [{ key: "dd", label: "Direct Debit" }, { key: "cc", label: "Credit / Debit card" }];
-  if (country === "NL") return [{ key: "dd", label: "Direct Debit" }, { key: "cc", label: "Credit / Debit card" }, { key: "bt", label: "Bank Transfer" }];
-  if (country === "CH") return [{ key: "bt", label: "Bank Transfer" }];
-  return [{ key: "dd", label: "Direct Debit" }, { key: "cc", label: "Credit / Debit card" }];
+  return PAYMENT_TABS_BY_COUNTRY[country] || PAYMENT_TABS_BY_COUNTRY._default;
 }
 
 const COUNTRY_OPTIONS = ["Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia","Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo","Costa Rica","Croatia","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar","Romania","Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"];
@@ -727,7 +746,7 @@ function renderContact() {
   return `<div class="card">${getBcHtml()}${getOutcomeHtml()}
     <div class="section-heading">Contact details</div>
     <div class="form-grid">
-      <div class="field"><label>Salutation</label><select data-crm="Salutation"><option value="">Select…</option><option>Mr</option><option>Ms</option><option>Mrs</option><option>Mx</option><option>Captain</option><option>Commodore</option><option>Dr</option></select></div>
+      <div class="field"><label>Salutation</label><select data-crm="Salutation"><option value="">Select…</option>${optionsHtml(SALUTATION_OPTIONS)}</select></div>
       <div class="form-row">
         <div class="field"><label>First name <span class="req">*</span></label><input type="text" name="given-name" data-crm="FirstName" autocomplete="given-name" required><span class="error-msg">Required</span></div>
         <div class="field"><label>Middle name</label><input type="text" name="additional-name" data-crm="MiddleName" autocomplete="additional-name"></div>
@@ -760,7 +779,7 @@ function renderPersonal() {
       <div class="field"><label>I live in / I'm a resident of… <span class="req">*</span></label><select data-crm="ResidentCountry" required>${COUNTRY_OPTIONS_HTML}</select><span class="error-msg">Required</span></div>
       <div class="form-row">
         <div class="field"><label>Your employer</label><input type="text" data-crm="Employer" autocomplete="organization" placeholder="Employer name"></div>
-        <div class="field"><label>Your rank</label><select data-crm="Rank" autocomplete="off"><option value="">Select…</option><option>Master</option><option>Chief Officer</option><option>Second Officer</option><option>Third Officer</option><option>Deck Officer</option><option>Chief Engineer</option><option>Second Engineer</option><option>Third Engineer</option><option>Fourth Engineer</option><option>Engineer Officer</option><option>Electro-Technical Officer</option><option>Radio Officer</option><option>Purser</option><option>Cadet</option><option>Bosun</option><option>AB (Able Seaman)</option><option>OS (Ordinary Seaman)</option><option>Motorman</option><option>Rating</option><option>Pilot</option><option>Harbourmaster</option><option>DPA</option><option>Trawler Officer</option><option>Yacht Captain</option><option>Yacht Officer</option><option>Yacht Crew</option><option>Shore-based</option><option>Other</option></select></div>
+        <div class="field"><label>Your rank</label><select data-crm="Rank" autocomplete="off"><option value="">Select…</option>${optionsHtml(RANK_OPTIONS)}</select></div>
       </div>
       ${state.selectedOutcome === "UK K1 membership" ? `<div style="margin-top:12px;padding:16px;background:var(--gray-50);border-radius:var(--radius);">
         <div style="font-weight:600;font-size:15px;margin-bottom:8px;">Reduced rate application</div>
@@ -808,7 +827,7 @@ function renderPayment() {
       </div>
       <div class="field"><label>IBAN</label><input type="text" data-crm="IBAN" autocomplete="off" placeholder="e.g. CH93 0076 2011 6238 5295 7"></div>
       <div class="field"><label>BIC / SWIFT</label><input type="text" data-crm="BIC" autocomplete="off" placeholder="e.g. UBSWCHZH80A"></div>
-      ${country === "CH" ? `<div class="field"><label>Currency <span class="req">*</span></label><select data-crm="BT_Currency" required><option value="">Select…</option><option value="CHF">Swiss Francs (CHF)</option><option value="EUR">Euros (EUR)</option></select><span class="error-msg">Required</span></div>` : ""}
+      ${country === "CH" ? `<div class="field"><label>Currency <span class="req">*</span></label><select data-crm="BT_Currency" required><option value="">Select…</option>${optionsHtml(CURRENCY_OPTIONS, "value")}</select><span class="error-msg">Required</span></div>` : ""}
       <div class="field"><label>Payment reference <span class="req">*</span></label><input type="text" data-crm="BT_Reference" autocomplete="off" placeholder="e.g. invoice or membership number" required><span class="error-msg">Required</span></div>`;
   }
 
@@ -820,7 +839,7 @@ function renderPayment() {
     <div class="section-heading">Payment method</div>
     <div class="pay-toggle">${toggleHtml}</div>
     <div class="form-grid">${payFields}
-      <div class="field"><label>Payment frequency <span class="req">*</span></label><select data-crm="PaymentFrequency" required><option value="">Select…</option><option value="monthly">Monthly</option><option value="6monthly">Six-monthly</option><option value="yearly">Yearly</option></select><span class="error-msg">Required</span></div>
+      <div class="field"><label>Payment frequency <span class="req">*</span></label><select data-crm="PaymentFrequency" required><option value="">Select…</option>${optionsHtml(PAYMENT_FREQUENCY_OPTIONS, "value")}</select><span class="error-msg">Required</span></div>
       <div class="field"><label>Referral code</label><input type="text" data-crm="ReferralCode" autocomplete="off" placeholder="If you have one"></div>
     </div>
     ${country === "NL" ? `<div style="margin-top:16px;padding:16px;background:var(--gray-50);border-radius:var(--radius);">
@@ -913,7 +932,7 @@ function renderComplete() {
       <div class="field"><label>Employer</label><input type="text" data-crm="Employer" autocomplete="organization" placeholder="Your employer name"></div>
       <div class="form-row">
         ${isAtSea ? `<div class="field"><label>Ship</label><input type="text" data-crm="Ship" autocomplete="off" placeholder="Current vessel"></div>` : ""}
-        <div class="field"><label>Rank</label><select data-crm="Rank" autocomplete="off"><option value="">Select…</option><option>Master</option><option>Chief Officer</option><option>Second Officer</option><option>Third Officer</option><option>Deck Officer</option><option>Chief Engineer</option><option>Second Engineer</option><option>Third Engineer</option><option>Fourth Engineer</option><option>Engineer Officer</option><option>Electro-Technical Officer</option><option>Radio Officer</option><option>Purser</option><option>Cadet</option><option>Bosun</option><option>AB (Able Seaman)</option><option>OS (Ordinary Seaman)</option><option>Motorman</option><option>Rating</option><option>Pilot</option><option>Harbourmaster</option><option>DPA</option><option>Trawler Officer</option><option>Yacht Captain</option><option>Yacht Officer</option><option>Yacht Crew</option><option>Shore-based</option><option>Other</option></select></div>
+        <div class="field"><label>Rank</label><select data-crm="Rank" autocomplete="off"><option value="">Select…</option>${optionsHtml(RANK_OPTIONS)}</select></div>
       </div>
       <div class="field"><label>Salary</label><input type="text" data-crm="Salary" autocomplete="off" placeholder="Annual salary"></div>`;
   }
@@ -935,9 +954,9 @@ function renderComplete() {
     </div>
     <div class="form-row">
       <div class="field"><label>Place of birth</label><input type="text" data-crm="PlaceOfBirth" autocomplete="off" placeholder="Town / city"></div>
-      <div class="field"><label>Gender</label><select data-crm="Gender" autocomplete="sex"><option value="">Select…</option><option>Male</option><option>Female</option><option>Non-binary</option><option>Prefer not to say</option></select></div>
+      <div class="field"><label>Gender</label><select data-crm="Gender" autocomplete="sex"><option value="">Select…</option>${optionsHtml(GENDER_OPTIONS)}</select></div>
     </div>
-    <div class="field"><label>Sector</label><select data-crm="Sector"><option value="">Select…</option><option>Merchant navy</option><option>Ocean-going cruise ships</option><option>Offshore</option><option>Yacht</option><option>Fishing</option><option>Ports &amp; harbours</option><option>Tugs</option><option>Inland waterways (cargo)</option><option>Inland waterways (river cruise)</option><option>Dredging</option><option>Locks</option><option>Pilotage</option><option>Other</option></select></div>`;
+    <div class="field"><label>Sector</label><select data-crm="Sector"><option value="">Select…</option>${optionsHtml(SECTOR_OPTIONS)}</select></div>`;
 
   let prefFields = `
     <div style="font-weight:600;font-size:15px;margin-bottom:8px;">How would you like us to contact you?</div>
@@ -946,7 +965,7 @@ function renderComplete() {
       <div class="field"><label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" data-crm="ContactPhone" checked style="width:auto;"> Phone</label></div>
       <div class="field"><label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" data-crm="ContactMail" checked style="width:auto;"> Post</label></div>
     </div>
-    <div class="field"><label>Preferred method of contact</label><select data-crm="PreferredMethodofContact"><option value="">Select…</option><option>Any</option><option>Email</option><option>Phone</option><option>Post</option></select></div>
+    <div class="field"><label>Preferred method of contact</label><select data-crm="PreferredMethodofContact"><option value="">Select…</option>${optionsHtml(CONTACT_METHOD_OPTIONS)}</select></div>
     <div class="field"><label>Alternate phone</label><input type="tel" data-crm="Address1Phone" autocomplete="off" placeholder="Landline or other number"></div>
     <div class="field" style="margin-top:12px;"><label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" data-crm="SendMarketingMaterial" checked style="width:auto;"> Send me marketing material from Nautilus</label></div>`;
 
@@ -959,9 +978,7 @@ function renderComplete() {
     <div class="member-header">
       <h1>My Nautilus</h1>
       <div class="member-tabs">
-        <span class="active">Overview</span><span>News</span><span>Campaigns &amp; Events</span>
-        <span>Courses</span><span>Resources</span><span>Jobs</span>
-        <span>Perks &amp; Benefits</span><span>Retirement</span><span>History</span><span>Sign out →</span>
+        ${MEMBER_TABS.map((t, i) => `<span${i === 0 ? ' class="active"' : ''}>${t}</span>`).join("")}
       </div>
     </div>
     <div class="member-body">
