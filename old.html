@@ -444,19 +444,6 @@
 
 <script>
 // ─── DATA MODEL — language taken directly from Duncan's spreadsheet ───
-// ─── UPDATES: custom messaging - financials, with any branch specific stuff - eg Swiss - apply for lower rate ───
-// ─── UPDATES: custom fields - personal details / branch specific eg Swiss check lower application, everyone has own rules and 'i agree to the rules' ───
-// ─── SWISS: checkbox / possible:document upload ───
-// ─── UK: checkbox for reduced hours / possible:document upload ───
-// ─── SWISS: 'Billing address' should be 'Address' street number and apartment number, 'Second line' address autocomplete ───
-// ─── DUTCH: Consent for marketing communications ───
-// ─── EVERYONE: email address ───
-// ─── EVERYONE: referral code (manual) ───
-// ─── EVERYONE: I live in, i'm a resident of... ─── (Dutch and Swiss asked for this)
-// ─── EVERYONE: Your employer ─── (Dutch concern about people in another country / don't know)
-// ─── EVERYONE: Your rank ─── (UK branch)
-// ─── EVERYONE: frequency of payments (check back with SWISS) ───
-// ─── UPDATES: new custom message at end - under review ───
 const QUESTIONS = {
   Q1: {
     flow: null,
@@ -464,9 +451,10 @@ const QUESTIONS = {
     subtitle: "We need some information from you to give you the membership package most tailored to your needs, and to set up your account with us.",
     options: [
       { label: "Working", routesTo: "Q2" },
-      { label: "Studying / In training", routesTo: "Q3" },
+      { label: "Studying", routesTo: "Q3" },
+      { label: "Retired", routesTo: "Q4" },
     ],
-    openQuestions: ["We'd want to be able to control this text - eg Dutch would have 'Studying' only in Dutch, Swiss would have both (in German), UK fine as is"]
+    openQuestions: ["Should 'Retired' also cover unemployed or long-term sick joiners? If so, does the label need to change?"]
   },
   Q2: {
     flow: "Working",
@@ -474,7 +462,7 @@ const QUESTIONS = {
     options: [
       { label: "In the UK", routesTo: "Q5" },
       { label: "In the Netherlands", routesTo: "Q6" },
-      { label: "In Switzerland", outcome: "CH Employed member union fee" },
+      { label: "In Switzerland", routesTo: "Q7" },
       { label: "In another country", routesTo: "Q8" },
       { label: "I'm not sure", routesTo: "Q8" },
     ],
@@ -485,11 +473,23 @@ const QUESTIONS = {
     question: "My learning institution is based…",
     options: [
       { label: "In the UK", note: "I am in training for an operational CoC as a cadet or trainee officer", outcome: "UK C1 membership" },
-      { label: "In the Netherlands", outcome: "NL Student membership" },
-      { label: "In Switzerland", note: "I’m employed by a Swiss company and in training in Switzerland or abroad", outcome: "CH Apprentice fee" },
+      { label: "In the Netherlands", outcome: "NL Category 4 membership" },
+      { label: "In Switzerland", note: "I am an apprentice", outcome: "CH Apprentice fee" },
+      { label: "In another country", unclear: true },
     ],
-    openQuestions: ["Need clarity: third option should be clear that the employment by a swiss company is the key factor, they could be learning abroad"]
-
+    openQuestions: ["'In another country' — should we collect more details to route them, or just direct to membership team?"]
+  },
+  Q4: {
+    flow: "Retired",
+    question: "My last employer was based…",
+    options: [
+      { label: "In the UK", outcome: "UK Retired membership" },
+      { label: "In the Netherlands", outcome: "NL Category 3" },
+      { label: "In Switzerland", outcome: "CH Pensioner / unemployed fee" },
+      { label: "In another country", unclear: true },
+      { label: "I'm not sure", unclear: true },
+    ],
+    openQuestions: ["'In another country' and 'I'm not sure' — should we collect more details to try to route them, or just direct to membership team?"]
   },
   Q5: {
     flow: "Working for a UK employer",
@@ -503,9 +503,18 @@ const QUESTIONS = {
     flow: "Working for a Dutch employer",
     question: "Select the membership that applies to you:",
     options: [
-      { label: "I am 23 years old or older", outcome: "NL 23 Years and Older" },
-      { label: "I am 22 years old or younger", outcome: "NL 22 Years and Younger" },
+      { label: "I am 23 years old or older", outcome: "NL Category 1" },
+      { label: "I am 22 years old or younger", outcome: "NL Category 2" },
     ]
+  },
+  Q7: {
+    flow: "Working for a Swiss employer",
+    question: "Select the membership that applies to you:",
+    options: [
+      { label: "My salary is over CHF 2,500/month", outcome: "CH Normal fee" },
+      { label: "My salary is under CHF 2,500/month", unclear: true },
+    ],
+    openQuestions: ["Under CHF 2,500 — does this need evidence, or can the reduced fee be applied online without verification?"]
   },
   Q8: {
     flow: "Working at sea",
@@ -515,9 +524,8 @@ const QUESTIONS = {
       {
         legend: "Maritime membership",
         options: [
-          { label: "Seagoing officer — certificated", note: "I have a valid management or operational CoC", outcome: "UK F1 membership" },
-          { label: "Seagoing officer — uncertificated", note: "I am an uncertificated officer working onboard ships", outcome: "UK P1 membership" },
-          { label: "Pilot", outcome: "UK R1 membership" },
+          { label: "Seagoing officer — certified", note: "I have a valid management or operational CoC", outcome: "UK F1 membership" },
+          { label: "Seagoing officer — uncertified", note: "I am an uncertified officer working onboard ships", outcome: "UK P1 membership" },
           { label: "Marine rating", outcome: "UK R1 membership" },
         ]
       },
@@ -531,10 +539,11 @@ const QUESTIONS = {
       {
         legend: "Other",
         options: [
-          { label: "None of these apply", outcome: "UK F1 membership" },
+          { label: "None of these apply", unclear: true },
         ]
       }
     ],
+    openQuestions: ["'None of these apply' — should we collect more details to try to route them, or just direct to membership team?"]
   },
   Q9: {
     flow: "Working onshore in the UK",
@@ -550,7 +559,7 @@ const QUESTIONS = {
 
 const STEP_NAMES = ["Your situation", "Payment", "Confirmation"];
 
-let state = { history: [], currentQ: "Q1", selectedOutcome: null, unclearOutcome: null, phase: "questions", payMethod: null, formData: {} };
+let state = { history: [], currentQ: "Q1", selectedOutcome: null, unclearOutcome: null, phase: "questions", payMethod: "dd", formData: {} };
 
 function getStepIndex() {
   if (state.phase === "complete") return 2;
@@ -639,29 +648,6 @@ function renderUnclear() {
   </div>`;
 }
 
-function getCountryFromHistory() {
-  if (state.history.length >= 2) {
-    const locQ = state.history[1];
-    if (locQ.questionId === "Q2" || locQ.questionId === "Q3" || locQ.questionId === "Q4") {
-      const locOpt = QUESTIONS[locQ.questionId].options[locQ.chosenIndex];
-      if (locOpt) {
-        const lbl = locOpt.label;
-        if (lbl.includes("UK")) return "UK";
-        if (lbl.includes("Netherlands")) return "NL";
-        if (lbl.includes("Switzerland")) return "CH";
-      }
-    }
-  }
-  return "UK"; // default
-}
-
-function getPaymentTabsForCountry(country) {
-  if (country === "UK") return [{ key: "dd", label: "Direct Debit" }, { key: "cc", label: "Credit / Debit card" }];
-  if (country === "NL") return [{ key: "dd", label: "Direct Debit" }, { key: "cc", label: "Credit / Debit card" }, { key: "bt", label: "Bank Transfer" }];
-  if (country === "CH") return [{ key: "bt", label: "Bank Transfer" }];
-  return [{ key: "dd", label: "Direct Debit" }, { key: "cc", label: "Credit / Debit card" }];
-}
-
 function renderPayment() {
   const crumbs = getBreadcrumbs();
   let bc = `<div class="breadcrumbs">${crumbs.map((c,i) =>
@@ -670,40 +656,22 @@ function renderPayment() {
 
   let outcomeHtml = "";
   if (state.selectedOutcome) {
-    outcomeHtml = `<div class="outcome-card"><div class="badge">Your membership</div><h3>${state.selectedOutcome}</h3><p>Your annual fee is XXX Your monthly fee is XXX.</p></div>`;
+    outcomeHtml = `<div class="outcome-card"><div class="badge">Your membership</div><h3>${state.selectedOutcome}</h3><p>Based on your answers, this is the recommended membership category.</p></div>`;
   }
 
-  const country = getCountryFromHistory();
-  const tabs = getPaymentTabsForCountry(country);
-
-  // Default to first available tab if current method not available for this country
-  if (!state.payMethod || !tabs.find(t => t.key === state.payMethod)) {
-    state.payMethod = tabs[0].key;
-  }
-
-  let payFields = "";
-  if (state.payMethod === "dd") {
-    payFields = `<div class="form-row">
+  const isDd = state.payMethod === "dd";
+  const payFields = isDd
+    ? `<div class="form-row">
         <div class="field"><label>Sort code <span class="req">*</span></label><input type="text" data-crm="SortCode" autocomplete="off" placeholder="00-00-00" required><span class="error-msg">Required</span></div>
         <div class="field"><label>Account number <span class="req">*</span></label><input type="text" data-crm="Accountnumber" autocomplete="off" required><span class="error-msg">Required</span></div>
       </div>
-      <div class="field"><label>Account holder name <span class="req">*</span></label><input type="text" data-crm="Accountname" autocomplete="cc-name" required><span class="error-msg">Required</span></div>`;
-  } else if (state.payMethod === "cc") {
-    payFields = `<div class="field"><label>Card number <span class="req">*</span></label><input type="text" data-crm="CardNumber" autocomplete="cc-number" placeholder="0000 0000 0000 0000" required><span class="error-msg">Required</span></div>
+      <div class="field"><label>Account holder name <span class="req">*</span></label><input type="text" data-crm="Accountname" autocomplete="cc-name" required><span class="error-msg">Required</span></div>`
+    : `<div class="field"><label>Card number <span class="req">*</span></label><input type="text" data-crm="CardNumber" autocomplete="cc-number" placeholder="0000 0000 0000 0000" required><span class="error-msg">Required</span></div>
       <div class="form-row">
         <div class="field"><label>Expiry date <span class="req">*</span></label><input type="text" data-crm="CardExpiry" autocomplete="cc-exp" placeholder="MM / YY" required><span class="error-msg">Required</span></div>
         <div class="field"><label>CVV <span class="req">*</span></label><input type="text" data-crm="CardCVV" autocomplete="cc-csc" placeholder="000" required><span class="error-msg">Required</span></div>
       </div>
       <div class="field"><label>Name on card <span class="req">*</span></label><input type="text" data-crm="Accountname" autocomplete="cc-name" required><span class="error-msg">Required</span></div>`;
-  } else if (state.payMethod === "bt") {
-    payFields = `<div class="field"><label>Account holder name <span class="req">*</span></label><input type="text" data-crm="Accountname" autocomplete="cc-name" required><span class="error-msg">Required</span></div>
-      <div class="field"><label>IBAN <span class="req">*</span></label><input type="text" data-crm="IBAN" autocomplete="off" placeholder="e.g. CH93 0076 2011 6238 5295 7" required><span class="error-msg">Required</span></div>
-      <div class="field"><label>BIC / SWIFT</label><input type="text" data-crm="BIC" autocomplete="off" placeholder="e.g. UBSWCHZH80A"></div>`;
-  }
-
-  const toggleHtml = tabs.map(t =>
-    `<button class="${state.payMethod === t.key ? 'active' : ''}" id="toggle_${t.key}">${t.label}</button>`
-  ).join("");
 
   return `<div class="card">${bc}${outcomeHtml}
     <div class="section-heading">Personal details</div>
@@ -721,7 +689,10 @@ function renderPayment() {
       <div class="field"><label>Mobile phone number <span class="req">*</span></label><input type="tel" data-crm="MobilePhone" autocomplete="tel" placeholder="Include country code" required><span class="error-msg">Required</span></div>
     </div>
     <div class="section-heading" style="margin-top:28px;">Payment method</div>
-    <div class="pay-toggle">${toggleHtml}</div>
+    <div class="pay-toggle">
+      <button class="${isDd ? 'active' : ''}" id="toggleDd">Direct Debit</button>
+      <button class="${isDd ? '' : 'active'}" id="toggleCc">Credit / Debit card</button>
+    </div>
     <div class="form-grid">${payFields}</div>
     <div class="btn-row"><button class="btn-back" id="backBtn">← Previous</button><button class="btn-primary" id="payBtn">Join &amp; pay</button></div>
   </div>`;
@@ -920,17 +891,12 @@ function updateCrmPanel() {
   const memberHtml = memberArr.join("");
 
   const payMethod = state.formData._payMethod || state.payMethod;
-  const payLabel = payMethod === "dd" ? "ContinuousDirectDebit" : payMethod === "bt" ? "BankTransfer" : "ContinuousCreditDebitcard";
+  const payLabel = payMethod === "dd" ? "ContinuousDirectDebit" : "ContinuousCreditDebitcard";
   let payArr = [f("PaymentMethod", payLabel), f("PaymentFrequency", ""), f("BACSWeek", "")];
   if (payMethod === "dd") {
     payArr.push(f("Accountname", v("Accountname")));
     payArr.push(f("Accountnumber", mask(state.formData.Accountnumber || "", 2)));
     payArr.push(f("SortCode", mask(state.formData.SortCode || "", 2)));
-  }
-  if (payMethod === "bt") {
-    payArr.push(f("Accountname", v("Accountname")));
-    payArr.push(f("IBAN", mask(state.formData.IBAN || "", 4)));
-    payArr.push(f("BIC", state.formData.BIC || v("BIC")));
   }
   payArr.push(f("IsEuropeSubscription", ""), f("TotalUnpaidAmountContinuous", ""));
   const payHtml = payArr.join("");
@@ -998,16 +964,19 @@ function bindEvents() {
     state.formData._payMethod = state.payMethod;
     state.phase = "complete"; render();
   });
-  ["dd", "cc", "bt"].forEach(key => {
-    const btn = document.getElementById("toggle_" + key);
-    if (btn) btn.addEventListener("click", () => {
-      document.querySelectorAll("[data-crm]").forEach(el => { if (el.value.trim()) state.formData[el.getAttribute("data-crm")] = el.value.trim(); });
-      state.payMethod = key; render();
-    });
+  const dd = document.getElementById("toggleDd");
+  if (dd) dd.addEventListener("click", () => {
+    document.querySelectorAll("[data-crm]").forEach(el => { if (el.value.trim()) state.formData[el.getAttribute("data-crm")] = el.value.trim(); });
+    state.payMethod = "dd"; render();
+  });
+  const cc = document.getElementById("toggleCc");
+  if (cc) cc.addEventListener("click", () => {
+    document.querySelectorAll("[data-crm]").forEach(el => { if (el.value.trim()) state.formData[el.getAttribute("data-crm")] = el.value.trim(); });
+    state.payMethod = "cc"; render();
   });
   const re = document.getElementById("restartBtn");
   if (re) re.addEventListener("click", () => {
-    state = { history:[], currentQ:"Q1", selectedOutcome:null, unclearOutcome:null, phase:"questions", payMethod:null, formData:{} };
+    state = { history:[], currentQ:"Q1", selectedOutcome:null, unclearOutcome:null, phase:"questions", payMethod:"dd", formData:{} };
     render();
   });
   // Live CRM updates on member profile page
