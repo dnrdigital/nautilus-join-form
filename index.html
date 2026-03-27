@@ -400,19 +400,19 @@
   .crm-grid { display: flex; justify-content: space-between; flex-direction: column; gap: 2; }
   .crm-row { display: flex; gap: 2px; }
   .crm-grid:nth-child(odd) { background: var(--gray-50); }
-  .crm-row .crm-field { flex: 1; }
+  .crm-row .crm-field { flex: 1; min-width: 0; overflow: hidden; }
   .crm-group-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--nautilus-blue); margin: 12px 0 4px; padding-left: 10px; }
   .crm-field {
     display: flex; align-items: baseline; gap: 8px;
-    padding: 6px 10px; border-radius: 3px; font-size: 13px;
+    padding: 6px 10px; border-radius: 3px; font-size: 13px; overflow: hidden;
   }
   .crm-field:nth-child(odd) { background: var(--gray-50); }
-  .crm-field .crm-key { color: var(--gray-600); font-family: monospace; font-size: 12px; min-width: 140px; }
-  .crm-field .crm-src { font-size: 10px; min-width: 70px; text-align: center; padding: 1px 6px; border-radius: 3px; white-space: nowrap; }
+  .crm-field .crm-key { color: var(--gray-600); font-family: monospace; font-size: 12px; min-width: 100px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .crm-field .crm-src { font-size: 10px; min-width: 60px; flex-shrink: 0; text-align: center; padding: 1px 6px; border-radius: 3px; white-space: nowrap; }
   .crm-field .crm-src.src-join { background: #dbeafe; color: #1e40af; }
   .crm-field .crm-src.src-profile { background: #d1fae5; color: #065f46; }
   .crm-field .crm-src.src-internal { background: var(--gray-100); color: var(--gray-400); }
-  .crm-field .crm-val { font-weight: 600; color: var(--gray-800); text-align: right; margin-left: auto; max-width: 50%; }
+  .crm-field .crm-val { font-weight: 600; color: var(--gray-800); text-align: right; margin-left: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .crm-field .crm-val.empty { color: var(--gray-300); font-weight: 400; font-style: italic; }
   @media (max-width: 700px) {
     .member-body { flex-direction: column; }
