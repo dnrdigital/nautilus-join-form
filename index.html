@@ -1142,21 +1142,20 @@ function bindEvents() {
   const back = document.getElementById("backBtn");
   if (back) back.addEventListener("click", goBack);
   function validateAndProceed(nextPhase) {
-    // TODO: RE-ENABLE VALIDATION BEFORE PUSHING TO LIVE
-    // document.querySelectorAll(".field.has-error").forEach(f => f.classList.remove("has-error"));
-    // let valid = true;
-    // document.querySelectorAll("[required]").forEach(el => {
-    //   const empty = el.type === "checkbox" ? !el.checked : !el.value.trim();
-    //   if (empty) {
-    //     el.closest(".field").classList.add("has-error");
-    //     valid = false;
-    //   }
-    // });
-    // if (!valid) {
-    //   const first = document.querySelector(".field.has-error input, .field.has-error select");
-    //   if (first) first.focus();
-    //   return;
-    // }
+    document.querySelectorAll(".field.has-error").forEach(f => f.classList.remove("has-error"));
+    let valid = true;
+    document.querySelectorAll("[required]").forEach(el => {
+      const empty = el.type === "checkbox" ? !el.checked : !el.value.trim();
+      if (empty) {
+        el.closest(".field").classList.add("has-error");
+        valid = false;
+      }
+    });
+    if (!valid) {
+      const first = document.querySelector(".field.has-error input, .field.has-error select");
+      if (first) first.focus();
+      return;
+    }
     saveFormFields();
     if (nextPhase === "interstitial") state.formData._payMethod = state.payMethod;
     state.phase = nextPhase; render();
