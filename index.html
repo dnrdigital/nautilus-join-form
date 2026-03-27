@@ -860,11 +860,14 @@ function renderInterstitial() {
       <p style="font-size:14px;color:var(--gray-500);">Membership pending — you'll have full access once payment is confirmed.</p>
       <div style="margin-top:24px;"><button class="btn-restart" id="restartBtn">Restart demo</button></div>
     </div>
-    <div class="crm-panel" id="crmPanel" style="max-width:800px;margin:32px auto 0;">
-      <div class="crm-panel-header">
-        <span class="crm-badge">CRM</span>
-        <h4>Member record</h4>
-        <p>Below the line — not shown to user. Updates live as profile is completed.</p>
+    <div style="max-width:800px;margin:32px auto 0;text-align:center;">
+      <button class="btn-crm-toggle" id="crmToggle" style="background:var(--gray-100);border:2px dashed var(--gray-300);color:var(--gray-600);padding:12px 24px;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;width:100%;">🔒 Show CRM member record (internal only)</button>
+      <div class="crm-panel" id="crmPanel" style="margin-top:16px;display:none;">
+        <div class="crm-panel-header">
+          <span class="crm-badge">CRM</span>
+          <h4>Member record</h4>
+          <p>Below the line — not shown to user. Updates live as profile is completed.</p>
+        </div>
       </div>
     </div>`;
   }
@@ -1186,6 +1189,14 @@ function bindEvents() {
       document.querySelectorAll("[data-crm]").forEach(el => { if (el.value.trim()) state.formData[el.getAttribute("data-crm")] = el.value.trim(); });
       state.payMethod = key; render();
     });
+  });
+  const crmToggle = document.getElementById("crmToggle");
+  if (crmToggle) crmToggle.addEventListener("click", () => {
+    const panel = document.getElementById("crmPanel");
+    const showing = panel.style.display !== "none";
+    panel.style.display = showing ? "none" : "";
+    crmToggle.textContent = showing ? "🔒 Show CRM member record (internal only)" : "🔒 Hide CRM member record";
+    if (!showing) updateCrmPanel();
   });
   const continueBtn = document.getElementById("continueToProfile");
   if (continueBtn) continueBtn.addEventListener("click", () => {
