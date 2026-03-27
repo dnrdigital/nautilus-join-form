@@ -13,7 +13,8 @@
       "Bash(git stash:*)",
       "Bash(gh api:*)",
       "Bash(pandoc \"/Users/duncan/Downloads/Untitled document.docx\" -o /tmp/nautilus-notes.md)",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(python3 -c \":*)"
     ]
   }
 }

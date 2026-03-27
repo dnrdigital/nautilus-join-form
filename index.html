@@ -397,8 +397,9 @@
     font-size: 11px; font-weight: 700; text-transform: uppercase;
     letter-spacing: 0.06em; color: var(--gray-400); margin: 16px 0 8px;
   }
-  .crm-grid { display: flex; flex-direction: column; gap: 0; }
+  .crm-grid { display: flex; justify-content: space-between; flex-direction: column; gap: 2; }
   .crm-row { display: flex; gap: 2px; }
+  .crm-grid:nth-child(odd) { background: var(--gray-50); }
   .crm-row .crm-field { flex: 1; }
   .crm-group-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--nautilus-blue); margin: 12px 0 4px; padding-left: 10px; }
   .crm-field {
@@ -440,9 +441,9 @@
   <span class="demo-tag">Prototype</span>
 </div>
 
-<div class="hero-banner">
-  <h1>Join online</h1>
-  <p>Select from our online specialist membership packages whatever your sector.</p>
+<div class="hero-banner" id="heroBanner">
+  <h1 id="heroTitle">Join online</h1>
+  <p id="heroSubtitle">Select from our online specialist membership packages whatever your sector.</p>
 </div>
 
 <div class="step-bar"><div class="step-bar-inner" id="stepBar"></div></div>
@@ -548,8 +549,8 @@ const MEMBERSHIP_INFO = {
   "UK Y1 membership": { branch: "United Kingdom", name: "Yacht officer", monthly: null, annual: "€405.00" },
   "UK Y2 membership": { branch: "United Kingdom", name: "Yacht crew", monthly: null, annual: "€275.00" },
   "UK C1 membership": { branch: "United Kingdom", name: "Cadet", monthly: null, annual: "£36.00" },
-  "NL 23 Years and Older": { branch: "Netherlands", name: "Member (23 years and older)", monthly: null, annual: null, tbc: true },
-  "NL 22 Years and Younger": { branch: "Netherlands", name: "Member (22 years and younger)", monthly: null, annual: null, tbc: true },
+  "NL 23 Years and Older": { branch: "Netherlands", name: "23 years and older", monthly: null, annual: null, tbc: true },
+  "NL 22 Years and Younger": { branch: "Netherlands", name: "22 years and younger", monthly: null, annual: null, tbc: true },
   "NL Student membership": { branch: "Netherlands", name: "Student", monthly: null, annual: null, tbc: true },
   "CH Employed member union fee": { branch: "Switzerland", name: "Employed ", monthly: null, annual: null, tbc: true },
   "CH Apprentice fee": { branch: "Switzerland", name: "Apprentice", monthly: null, annual: null, tbc: true },
@@ -586,9 +587,13 @@ function render() {
   const app = document.getElementById("app");
   const container = document.getElementById("app");
   // Widen for member area
+  const isMemberArea = state.phase === "complete" || state.phase === "interstitial";
   container.style.maxWidth = state.phase === "complete" ? "860px" : "640px";
   // Hide step bar on interstitial and complete
-  document.getElementById("stepBar").parentElement.style.display = (state.phase === "complete" || state.phase === "interstitial") ? "none" : "";
+  document.getElementById("stepBar").parentElement.style.display = isMemberArea ? "none" : "";
+  // Update hero banner
+  document.getElementById("heroTitle").textContent = isMemberArea ? "Website member area" : "Join online";
+  document.getElementById("heroSubtitle").textContent = isMemberArea ? "Update your profile to see personalised content" : "Select from our online specialist membership packages whatever your sector.";
   if (state.phase === "questions") app.innerHTML = renderQuestion();
   else if (state.phase === "unclear") app.innerHTML = renderUnclear();
   else if (state.phase === "contact") app.innerHTML = renderContact();
@@ -949,7 +954,7 @@ function renderComplete() {
   return `
   <div class="member-area">
     <div class="member-header">
-      <h1>Website member area</h1>
+      <h1>My Nautilus</h1>
       <div class="member-tabs">
         <span class="active">Overview</span><span>News</span><span>Campaigns &amp; Events</span>
         <span>Courses</span><span>Resources</span><span>Jobs</span>
@@ -1051,16 +1056,18 @@ function updateCrmPanel() {
     return "•".repeat(val.length - show) + val.slice(-show);
   }
 
-  // Person fields grouped logically
-  function row() { return '<div class="crm-row">' + Array.from(arguments).join('') + '</div>'; }
+  // Person fields grouped logically (max 2 per row)
+  function row(a, b) { return '<div class="crm-row">' + a + (b || '') + '</div>'; }
   const personHtml =
     '<div class="crm-group-label">Identity</div>' +
     row(f("Id", "", "Internal only"), f("Salutation", v("Salutation"), "Join form")) +
-    row(f("FirstName", v("FirstName"), "Join form"), f("MiddleName", v("MiddleName"), "Join form"), f("LastName", v("LastName"), "Join form")) +
-    row(f("Gender", v("Gender"), "Profile form"), f("Birthday", v("Birthday"), "Profile form")) +
-    row(f("PlaceOfBirth", v("PlaceOfBirth"), "Profile form"), f("NationalityId", "", "Internal only"), f("Nationality", v("Nationality"), "Profile form")) +
+    row(f("FirstName", v("FirstName"), "Join form"), f("MiddleName", v("MiddleName"), "Join form")) +
+    row(f("LastName", v("LastName"), "Join form"), f("Gender", v("Gender"), "Profile form")) +
+    row(f("Birthday", v("Birthday"), "Profile form"), f("PlaceOfBirth", v("PlaceOfBirth"), "Profile form")) +
+    row(f("NationalityId", "", "Internal only"), f("Nationality", v("Nationality"), "Profile form")) +
     '<div class="crm-group-label">Contact</div>' +
-    row(f("Email", v("Email"), "Join form"), f("MobilePhone", v("MobilePhone"), "Join form"), f("Address1Phone", v("Address1Phone"), "Profile form")) +
+    row(f("Email", v("Email"), "Join form"), f("MobilePhone", v("MobilePhone"), "Join form")) +
+    row(f("Address1Phone", v("Address1Phone"), "Profile form")) +
     '<div class="crm-group-label">Address</div>' +
     row(f("Address1Street1", v("Address1Street1"), "Join form"), f("Address1Street2", v("Address1Street2"), "Join form")) +
     row(f("Address1City", v("Address1City"), "Join form"), f("Address1County", v("Address1County"), "Join form")) +
