@@ -398,7 +398,7 @@
     letter-spacing: 0.06em; color: var(--gray-400); margin: 16px 0 8px;
   }
   .crm-grid { display: flex; justify-content: space-between; flex-direction: column; gap: 2; }
-  .crm-row { display: flex; gap: 2px; }
+  .crm-row { display: flex; justify-content: space-between; gap: 2px; }
   .crm-grid:nth-child(odd) { background: var(--gray-50); }
   .crm-row .crm-field { flex: 1; min-width: 0; overflow: hidden; }
   .crm-group-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--nautilus-blue); margin: 12px 0 4px; padding-left: 10px; }
@@ -879,7 +879,7 @@ function renderInterstitial() {
       <p style="font-size:14px;color:var(--gray-500);">Membership pending — you'll have full access once payment is confirmed.</p>
       <div style="margin-top:24px;"><button class="btn-restart" id="restartBtn">Restart demo</button></div>
     </div>
-    <div style="max-width:800px;margin:32px auto 0;text-align:center;">
+    <div style="max-width:860px;margin:32px auto 0;text-align:center;">
       <button class="btn-crm-toggle" id="crmToggle" style="background:var(--gray-100);border:2px dashed var(--gray-300);color:var(--gray-600);padding:12px 24px;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;width:100%;">🔒 Show CRM member record (internal only)</button>
       <div class="crm-panel" id="crmPanel" style="margin-top:16px;display:none;">
         <div class="crm-panel-header">
@@ -1009,11 +1009,14 @@ function renderComplete() {
     </div>
   </div>
 
-  <div class="crm-panel" id="crmPanel" style="max-width:800px;margin:32px auto 0;">
-    <div class="crm-panel-header">
-      <span class="crm-badge">CRM</span>
-      <h4>Member record</h4>
-      <p>Below the line — not shown to user. Updates live as profile is completed.</p>
+  <div style="max-width:860px;margin:32px auto 0;text-align:center;">
+    <button class="btn-crm-toggle" id="crmToggle" style="background:var(--gray-100);border:2px dashed var(--gray-300);color:var(--gray-600);padding:12px 24px;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;width:100%;">🔒 Show CRM member record (internal only)</button>
+    <div class="crm-panel" id="crmPanel" style="margin-top:16px;display:none;">
+      <div class="crm-panel-header">
+        <span class="crm-badge">CRM</span>
+        <h4>Member record</h4>
+        <p>Below the line — not shown to user. Updates live as profile is completed.</p>
+      </div>
     </div>
   </div>
 
