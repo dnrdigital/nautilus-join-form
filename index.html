@@ -397,7 +397,10 @@
     font-size: 11px; font-weight: 700; text-transform: uppercase;
     letter-spacing: 0.06em; color: var(--gray-400); margin: 16px 0 8px;
   }
-  .crm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .crm-grid { display: flex; flex-direction: column; gap: 0; }
+  .crm-row { display: flex; gap: 2px; }
+  .crm-row .crm-field { flex: 1; }
+  .crm-group-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--nautilus-blue); margin: 12px 0 4px; padding-left: 10px; }
   .crm-field {
     display: flex; align-items: baseline; gap: 8px;
     padding: 6px 10px; border-radius: 3px; font-size: 13px;
@@ -413,7 +416,7 @@
   @media (max-width: 700px) {
     .member-body { flex-direction: column; }
     .quicklinks { width: 100%; }
-    .crm-grid { grid-template-columns: 1fr; }
+    .crm-row { flex-direction: column; }
   }
 
   @media (max-width: 480px) {
@@ -558,6 +561,7 @@ let state = { history: [], currentQ: "Q1", selectedOutcome: null, unclearOutcome
 
 function getStepIndex() {
   if (state.phase === "complete") return 3;
+  if (state.phase === "interstitial") return 3;
   if (state.phase === "payment") return 3;
   if (state.phase === "personal") return 2;
   if (state.phase === "contact") return 1;
@@ -583,13 +587,14 @@ function render() {
   const container = document.getElementById("app");
   // Widen for member area
   container.style.maxWidth = state.phase === "complete" ? "860px" : "640px";
-  // Hide step bar on complete
-  document.getElementById("stepBar").parentElement.style.display = state.phase === "complete" ? "none" : "";
+  // Hide step bar on interstitial and complete
+  document.getElementById("stepBar").parentElement.style.display = (state.phase === "complete" || state.phase === "interstitial") ? "none" : "";
   if (state.phase === "questions") app.innerHTML = renderQuestion();
   else if (state.phase === "unclear") app.innerHTML = renderUnclear();
   else if (state.phase === "contact") app.innerHTML = renderContact();
   else if (state.phase === "personal") app.innerHTML = renderPersonal();
   else if (state.phase === "payment") app.innerHTML = renderPayment();
+  else if (state.phase === "interstitial") app.innerHTML = renderInterstitial();
   else app.innerHTML = renderComplete();
   bindEvents();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -828,6 +833,47 @@ function renderPayment() {
 }
 
 
+function renderInterstitial() {
+  const payMethod = state.formData._payMethod || state.payMethod;
+  const isBankTransfer = payMethod === "bt";
+  const firstName = state.formData.FirstName || "";
+
+  if (isBankTransfer) {
+    return `<div class="card" style="text-align:center;padding:48px 32px;">
+      ${getBcHtml()}
+      <div style="font-size:48px;margin-bottom:16px;">✉️</div>
+      <h2 style="color:var(--nautilus-navy);margin-bottom:12px;">Thank you${firstName ? ', ' + firstName : ''}!</h2>
+      <p style="font-size:16px;color:var(--gray-600);max-width:500px;margin:0 auto 24px;">Your membership application has been received. As you've chosen to pay by bank transfer, our membership team will be in touch with payment details and to confirm your membership.</p>
+      <div style="background:var(--gray-50);border-radius:var(--radius);padding:20px;max-width:400px;margin:0 auto 24px;">
+        <div style="font-weight:600;margin-bottom:8px;">What happens next?</div>
+        <div style="font-size:14px;color:var(--gray-600);text-align:left;">
+          <div style="margin-bottom:8px;">1. You'll receive a confirmation email shortly</div>
+          <div style="margin-bottom:8px;">2. The membership team will send you bank transfer details</div>
+          <div>3. Once payment is received, your membership will be activated</div>
+        </div>
+      </div>
+      <p style="font-size:14px;color:var(--gray-500);">Membership pending — you'll have full access once payment is confirmed.</p>
+      <div style="margin-top:24px;"><button class="btn-restart" id="restartBtn">Restart demo</button></div>
+    </div>
+    <div class="crm-panel" id="crmPanel" style="max-width:800px;margin:32px auto 0;">
+      <div class="crm-panel-header">
+        <span class="crm-badge">CRM</span>
+        <h4>Member record</h4>
+        <p>Below the line — not shown to user. Updates live as profile is completed.</p>
+      </div>
+    </div>`;
+  }
+
+  // Non-bank-transfer: show interstitial then member area
+  return `<div class="card" style="text-align:center;padding:48px 32px;">
+    ${getBcHtml()}
+    <div style="font-size:48px;margin-bottom:16px;">🎉</div>
+    <h2 style="color:var(--nautilus-navy);margin-bottom:12px;">Welcome to Nautilus${firstName ? ', ' + firstName : ''}!</h2>
+    <p style="font-size:16px;color:var(--gray-600);max-width:500px;margin:0 auto 24px;">Your membership is now active. You can update your profile below to see personalised content, news and resources.</p>
+    <button class="btn-primary" id="continueToProfile">Continue to member area →</button>
+  </div>`;
+}
+
 function renderComplete() {
   const sit = state.history.length && state.history[0].chosenIndex !== undefined
     ? QUESTIONS.Q1.options[state.history[0].chosenIndex].label : "";
@@ -903,7 +949,7 @@ function renderComplete() {
   return `
   <div class="member-area">
     <div class="member-header">
-      <h1>My Nautilus</h1>
+      <h1>Website member area</h1>
       <div class="member-tabs">
         <span class="active">Overview</span><span>News</span><span>Campaigns &amp; Events</span>
         <span>Courses</span><span>Resources</span><span>Jobs</span>
@@ -931,7 +977,7 @@ function renderComplete() {
 
     <div class="card" style="margin-top:20px;">
       <div class="section-heading">Complete your profile</div>
-      <p style="font-size:14px;color:var(--gray-600);margin-bottom:20px;">Help us tailor your membership experience. You can fill these in now or come back any time.</p>
+      <p style="font-size:14px;color:var(--gray-600);margin-bottom:20px;">Update your profile to see personalised content.</p>
       <div class="form-grid" id="profileForm">${profileFields}</div>
       <div class="section-heading" style="margin-top:28px;">Communication preferences</div>
       <div class="form-grid">${prefFields}</div>
@@ -1005,30 +1051,33 @@ function updateCrmPanel() {
     return "•".repeat(val.length - show) + val.slice(-show);
   }
 
-  // Person fields (per CRM spreadsheet)
-  const personHtml = [
-    f("Id", "", "Internal only"),
-    f("FirstName", v("FirstName"), "Join form"), f("MiddleName", v("MiddleName"), "Join form"), f("LastName", v("LastName"), "Join form"),
-    f("NationalityId", "", "Internal only"), f("Nationality", v("Nationality"), "Profile form"),
-    f("Birthday", v("Birthday"), "Profile form"), f("PlaceOfBirth", v("PlaceOfBirth"), "Profile form"),
-    f("Gender", v("Gender"), "Profile form"), f("Salutation", v("Salutation"), "Join form"),
-    f("Address1Phone", v("Address1Phone"), "Profile form"), f("MobilePhone", v("MobilePhone"), "Join form"), f("Email", v("Email"), "Join form"),
-    f("Address1Street1", v("Address1Street1"), "Join form"), f("Address1Street2", v("Address1Street2"), "Join form"),
-    f("Address1County", v("Address1County"), "Join form"), f("Address1City", v("Address1City"), "Join form"),
-    f("Address1PostCode", v("Address1PostCode"), "Join form"), f("Address1CountryRegion", v("Address1CountryRegion"), "Join form"),
-    f("EmployerId", "", "Internal only"), f("Employer", v("Employer"), "Join form"),
-    f("Contract location", contractLocation, "Join form"),
-    f("ShipId", "", "Internal only"), f("Ship", v("Ship"), "Profile form"),
-    f("CadetStartDate", v("CadetStartDate"), "Profile form"), f("CadetEndDate", v("CadetEndDate"), "Profile form"),
-    f("DischargeBookNumber", "", "Internal only"),
-    f("RankId", "", "Internal only"), f("Rank", v("Rank"), "Join form"),
-    f("BACSWeek", "", "Internal only"),
-    f("ClassId", state.selectedOutcome || "", "Join form"), f("Branch", branch, "Join form"),
-    f("PreferredMethodofContact", v("PreferredMethodofContact"), "Profile form"),
-    f("DepartmentId", "", "Internal only"),
-    f("SWZ", v("SWZ"), "Join form"), f("Telegraph", v("Telegraph"), "Join form"),
-    f("Sector", v("Sector"), "Profile form"),
-  ].join("");
+  // Person fields grouped logically
+  function row() { return '<div class="crm-row">' + Array.from(arguments).join('') + '</div>'; }
+  const personHtml =
+    '<div class="crm-group-label">Identity</div>' +
+    row(f("Id", "", "Internal only"), f("Salutation", v("Salutation"), "Join form")) +
+    row(f("FirstName", v("FirstName"), "Join form"), f("MiddleName", v("MiddleName"), "Join form"), f("LastName", v("LastName"), "Join form")) +
+    row(f("Gender", v("Gender"), "Profile form"), f("Birthday", v("Birthday"), "Profile form")) +
+    row(f("PlaceOfBirth", v("PlaceOfBirth"), "Profile form"), f("NationalityId", "", "Internal only"), f("Nationality", v("Nationality"), "Profile form")) +
+    '<div class="crm-group-label">Contact</div>' +
+    row(f("Email", v("Email"), "Join form"), f("MobilePhone", v("MobilePhone"), "Join form"), f("Address1Phone", v("Address1Phone"), "Profile form")) +
+    '<div class="crm-group-label">Address</div>' +
+    row(f("Address1Street1", v("Address1Street1"), "Join form"), f("Address1Street2", v("Address1Street2"), "Join form")) +
+    row(f("Address1City", v("Address1City"), "Join form"), f("Address1County", v("Address1County"), "Join form")) +
+    row(f("Address1PostCode", v("Address1PostCode"), "Join form"), f("Address1CountryRegion", v("Address1CountryRegion"), "Join form")) +
+    '<div class="crm-group-label">Employment</div>' +
+    row(f("EmployerId", "", "Internal only"), f("Employer", v("Employer"), "Join form")) +
+    row(f("RankId", "", "Internal only"), f("Rank", v("Rank"), "Join form")) +
+    row(f("ShipId", "", "Internal only"), f("Ship", v("Ship"), "Profile form")) +
+    row(f("Sector", v("Sector"), "Profile form"), f("Contract location", contractLocation, "Join form")) +
+    row(f("CadetStartDate", v("CadetStartDate"), "Profile form"), f("CadetEndDate", v("CadetEndDate"), "Profile form")) +
+    row(f("DischargeBookNumber", "", "Internal only")) +
+    '<div class="crm-group-label">Membership</div>' +
+    row(f("ClassId", state.selectedOutcome || "", "Join form"), f("Branch", branch, "Join form")) +
+    row(f("DepartmentId", "", "Internal only"), f("BACSWeek", "", "Internal only")) +
+    '<div class="crm-group-label">Preferences</div>' +
+    row(f("PreferredMethodofContact", v("PreferredMethodofContact"), "Profile form")) +
+    row(f("SWZ", v("SWZ"), "Join form"), f("Telegraph", v("Telegraph"), "Join form"));
 
   // ContactMethods (per CRM spreadsheet)
   const contactHtml = [
@@ -1102,7 +1151,7 @@ function bindEvents() {
     //   return;
     // }
     saveFormFields();
-    if (nextPhase === "complete") state.formData._payMethod = state.payMethod;
+    if (nextPhase === "interstitial") state.formData._payMethod = state.payMethod;
     state.phase = nextPhase; render();
   }
   const next = document.getElementById("nextBtn");
@@ -1111,7 +1160,7 @@ function bindEvents() {
     else if (state.phase === "personal") validateAndProceed("payment");
   });
   const pay = document.getElementById("payBtn");
-  if (pay) pay.addEventListener("click", () => validateAndProceed("complete"));
+  if (pay) pay.addEventListener("click", () => validateAndProceed("interstitial"));
   const reducedCheck = document.getElementById("reducedRateCheck");
   if (reducedCheck) reducedCheck.addEventListener("change", () => {
     document.getElementById("reducedRateFields").style.display = reducedCheck.checked ? "block" : "none";
@@ -1131,6 +1180,10 @@ function bindEvents() {
       document.querySelectorAll("[data-crm]").forEach(el => { if (el.value.trim()) state.formData[el.getAttribute("data-crm")] = el.value.trim(); });
       state.payMethod = key; render();
     });
+  });
+  const continueBtn = document.getElementById("continueToProfile");
+  if (continueBtn) continueBtn.addEventListener("click", () => {
+    state.phase = "complete"; render();
   });
   const re = document.getElementById("restartBtn");
   if (re) re.addEventListener("click", () => {
@@ -1156,7 +1209,7 @@ function bindEvents() {
     el.addEventListener(evt, () => el.closest(".field").classList.remove("has-error"));
   });
   // Initial CRM render
-  if (state.phase === "complete") updateCrmPanel();
+  if (state.phase === "complete" || state.phase === "interstitial") updateCrmPanel();
 }
 
 function handleChoice(idx) {
