@@ -937,7 +937,6 @@ function renderComplete() {
       <div class="field"><label>Place of birth</label><input type="text" data-crm="PlaceOfBirth" autocomplete="off" placeholder="Town / city"></div>
       <div class="field"><label>Gender</label><select data-crm="Gender" autocomplete="sex"><option value="">Select…</option><option>Male</option><option>Female</option><option>Non-binary</option><option>Prefer not to say</option></select></div>
     </div>
-    <div class="field"><label>Alternate phone</label><input type="tel" data-crm="Address1Phone" autocomplete="off" placeholder="Landline or other number"></div>
     <div class="field"><label>Sector</label><select data-crm="Sector"><option value="">Select…</option><option>Merchant navy</option><option>Ocean-going cruise ships</option><option>Offshore</option><option>Yacht</option><option>Fishing</option><option>Ports &amp; harbours</option><option>Tugs</option><option>Inland waterways (cargo)</option><option>Inland waterways (river cruise)</option><option>Dredging</option><option>Locks</option><option>Pilotage</option><option>Other</option></select></div>`;
 
   let prefFields = `
@@ -948,6 +947,7 @@ function renderComplete() {
       <div class="field"><label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" data-crm="ContactMail" checked style="width:auto;"> Post</label></div>
     </div>
     <div class="field"><label>Preferred method of contact</label><select data-crm="PreferredMethodofContact"><option value="">Select…</option><option>Any</option><option>Email</option><option>Phone</option><option>Post</option></select></div>
+    <div class="field"><label>Alternate phone</label><input type="tel" data-crm="Address1Phone" autocomplete="off" placeholder="Landline or other number"></div>
     <div class="field" style="margin-top:12px;"><label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" data-crm="SendMarketingMaterial" checked style="width:auto;"> Send me marketing material from Nautilus</label></div>`;
 
   const firstName = state.formData.FirstName || "";
