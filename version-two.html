@@ -443,7 +443,7 @@
 
 <div class="hero-banner" id="heroBanner">
   <h1 id="heroTitle">Join online</h1>
-  <p id="heroSubtitle">Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod.</p>
+  <p id="heroSubtitle">Select from our online specialist membership packages whatever your sector.</p>
 </div>
 
 <div class="step-bar"><div class="step-bar-inner" id="stepBar"></div></div>
@@ -552,8 +552,8 @@ const MEMBERSHIP_INFO = {
   "NL 23 Years and Older": { branch: "Netherlands", name: "23 years and older", monthly: { dd: "€XX" }, annual: "€XX", note: "Actual figures to be added — check with NL branch" },
   "NL 22 Years and Younger": { branch: "Netherlands", name: "22 years and younger", monthly: { dd: "€XX" }, annual: "€XX", note: "Actual figures to be added — check with NL branch" },
   "NL Student membership": { branch: "Netherlands", name: "Student", monthly: { dd: "€XX" }, annual: "€XX", note: "Actual figures to be added — check with NL branch" },
-  "CH Employed member union fee": { branch: "Switzerland", name: "Employed", monthly: { dd: "CHF 24.00 / EUR 20.00" }, annual: "CHF 288.00 / EUR 240.00" },
-  "CH Apprentice fee": { branch: "Switzerland", name: "Apprentice", monthly: { dd: "CHF 6.00 / EUR 5.50" }, annual: "CHF 72.00 / EUR 66.00" },
+  "CH Employed member union fee": { branch: "Switzerland", name: "Employed", monthly: { dd: "CHF XX" }, annual: "CHF XX", note: "Actual figures to be added — check with CH branch" },
+  "CH Apprentice fee": { branch: "Switzerland", name: "Apprentice", monthly: { dd: "CHF XX" }, annual: "CHF XX", note: "Actual figures to be added — check with CH branch" },
 };
 
 const STEP_NAMES = ["Your situation", "Contact details", "Personal details", "Payment"];
@@ -561,10 +561,9 @@ const STEP_NAMES = ["Your situation", "Contact details", "Personal details", "Pa
 // ─── DROPDOWN OPTIONS (centralised for diagram/CRM sync) ───
 const SALUTATION_OPTIONS = ["Mr", "Ms", "Mrs", "Mx", "Captain", "Commodore", "Dr"];
 const RANK_OPTIONS = ["Master", "Chief Officer", "Second Officer", "Third Officer", "Deck Officer", "Chief Engineer", "Second Engineer", "Third Engineer", "Fourth Engineer", "Engineer Officer", "Electro-Technical Officer", "Radio Officer", "Purser", "Cadet", "Bosun", "AB (Able Seaman)", "OS (Ordinary Seaman)", "Motorman", "Rating", "Pilot", "Harbourmaster", "DPA", "Trawler Officer", "Yacht Captain", "Yacht Officer", "Yacht Crew", "Shore-based", "Other"];
-const CH_RANK_OPTIONS = ["Hotel manager", "Chef de partie", "Purser", "Housekeeping", "Chief Steward", "Steward", "Cook", "Bosun", "AB (Able Seaman)", "OS (Ordinary Seaman)", "Motorman", "Rating", "Master", "Chief Officer", "Second Officer", "Third Officer", "Chief Engineer", "Second Engineer", "Third Engineer", "Electro-Technical Officer", "Cadet"];
 const GENDER_OPTIONS = ["Male", "Female", "Non-binary", "Prefer not to say"];
 const SECTOR_OPTIONS = ["Merchant navy", "Ocean-going cruise ships", "Offshore", "Yacht", "Fishing", "Ports &amp; harbours", "Tugs", "Inland waterways (cargo)", "Inland waterways (river cruise)", "Dredging", "Locks", "Pilotage", "Other"];
-const PAYMENT_FREQUENCY_OPTIONS = [{ value: "monthly", label: "Monthly" }, { value: "quarterly", label: "Quarterly" }, { value: "6monthly", label: "Six-monthly" }, { value: "yearly", label: "Yearly" }];
+const PAYMENT_FREQUENCY_OPTIONS = [{ value: "monthly", label: "Monthly" }, { value: "6monthly", label: "Six-monthly" }, { value: "yearly", label: "Yearly" }];
 const CURRENCY_OPTIONS = [{ value: "CHF", label: "Swiss Francs (CHF)" }, { value: "EUR", label: "Euros (EUR)" }];
 const CONTACT_METHOD_OPTIONS = ["Any", "Email", "Phone", "Post"];
 const MEMBER_TABS = ["Overview", "News", "Campaigns &amp; Events", "Courses", "Resources", "Jobs", "Perks &amp; Benefits", "Retirement", "History", "Sign out →"];
@@ -575,7 +574,7 @@ function optionsHtml(arr, valueKey) {
   return arr.map(o => `<option>${o}</option>`).join("");
 }
 
-let state = { history: [], currentQ: "Q1", selectedOutcome: null, unclearOutcome: null, phase: "questions", payMethod: null, formData: {}, swzDigitalOptIn: false, swzPhysicalOptIn: false };
+let state = { history: [], currentQ: "Q1", selectedOutcome: null, unclearOutcome: null, phase: "questions", payMethod: null, formData: {}, swzOptIn: false };
 
 function getStepIndex() {
   if (state.phase === "complete") return 3;
@@ -610,7 +609,7 @@ function render() {
   document.getElementById("stepBar").parentElement.style.display = isMemberArea ? "none" : "";
   // Update hero banner
   document.getElementById("heroTitle").textContent = isMemberArea ? "Website member area" : "Join online";
-  document.getElementById("heroSubtitle").textContent = isMemberArea ? "Update your profile to see personalised content" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod.";
+  document.getElementById("heroSubtitle").textContent = isMemberArea ? "Update your profile to see personalised content" : "Select from our online specialist membership packages whatever your sector.";
   if (state.phase === "questions") app.innerHTML = renderQuestion();
   else if (state.phase === "unclear") app.innerHTML = renderUnclear();
   else if (state.phase === "contact") app.innerHTML = renderContact();
@@ -702,7 +701,7 @@ const TERMS_URLS = {
 
 const PAYMENT_TABS_BY_COUNTRY = {
   UK: [{ key: "dd", label: "Direct Debit" }, { key: "cc", label: "Credit / Debit card" }],
-  NL: [{ key: "dd", label: "Direct Debit" }, { key: "cc", label: "Credit / Debit card" }],
+  NL: [{ key: "dd", label: "Direct Debit" }, { key: "cc", label: "Credit / Debit card" }, { key: "bt", label: "Bank Transfer" }],
   CH: [{ key: "bt", label: "Bank Transfer" }],
   _default: [{ key: "dd", label: "Direct Debit" }, { key: "cc", label: "Credit / Debit card" }],
 };
@@ -732,11 +731,8 @@ function getOutcomeHtml() {
     noteHtml = `<div style="margin-top:10px;font-size:13px;color:#5e35b1;">⚠ ${info.note}</div>`;
   }
   let swzHtml = "";
-  if (getCountryFromHistory() === "NL") {
-    let swzLines = [];
-    if (state.swzDigitalOptIn) swzLines.push(`<span style="font-size:14px;color:var(--gray-600);">+ SWZ Maritime (digital): </span><span style="font-weight:700;color:var(--nautilus-navy);">€3.95</span><span style="font-size:14px;color:var(--gray-600);">/month</span>`);
-    if (state.swzPhysicalOptIn) swzLines.push(`<span style="font-size:14px;color:var(--gray-600);">+ SWZ Maritime (physical): </span><span style="font-weight:700;color:var(--nautilus-navy);">€4.13</span><span style="font-size:14px;color:var(--gray-600);">/month</span>`);
-    if (swzLines.length) swzHtml = `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-200);">${swzLines.join("<br>")}</div>`;
+  if (state.swzOptIn && getCountryFromHistory() === "NL") {
+    swzHtml = `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-200);"><span style="font-size:14px;color:var(--gray-600);">+ SWZ Maritime: </span><span style="font-weight:700;color:var(--nautilus-navy);">€3.95</span><span style="font-size:14px;color:var(--gray-600);"> per month</span></div>`;
   }
   return `<div class="outcome-card"><div class="badge">${info.branch} branch</div><h3>${info.name} membership</h3><p>${costHtml}</p>${noteHtml}${swzHtml}</div>`;
 }
@@ -749,9 +745,6 @@ function getBcHtml() {
 }
 
 function renderContact() {
-  const country = getCountryFromHistory();
-  const preselect = { NL: "Netherlands", CH: "Switzerland", UK: "United Kingdom" }[country] || "";
-  const countryOptionsHtml = '<option value="">Select…</option>' + COUNTRY_OPTIONS.map(c => `<option${c === preselect ? " selected" : ""}>${c}</option>`).join("");
   return `<div class="card">${getBcHtml()}${getOutcomeHtml()}
     <div class="section-heading">Contact details</div>
     <div class="form-grid">
@@ -761,7 +754,7 @@ function renderContact() {
         <div class="field"><label>Middle name</label><input type="text" name="additional-name" data-crm="MiddleName" autocomplete="additional-name"></div>
         <div class="field"><label>Last name <span class="req">*</span></label><input type="text" name="family-name" data-crm="LastName" autocomplete="family-name" required><span class="error-msg">Required</span></div>
       </div>
-      <div class="field"><label>Address <span class="req">*</span></label><input type="text" name="address-line1" data-crm="Address1Street1" autocomplete="address-line1" placeholder="Street and number" required><span class="error-msg">Required</span></div>
+      <div class="field"><label>Address <span class="req">*</span></label><input type="text" name="address-line1" data-crm="Address1Street1" autocomplete="address-line1" placeholder="First line of address" required><span class="error-msg">Required</span></div>
       <div class="field"><label>Second line</label><input type="text" name="address-line2" data-crm="Address1Street2" autocomplete="address-line2" placeholder="Apartment, suite, etc."></div>
       <div class="form-row">
         <div class="field"><label>Town / City <span class="req">*</span></label><input type="text" name="address-level2" data-crm="Address1City" autocomplete="address-level2" required><span class="error-msg">Required</span></div>
@@ -769,7 +762,7 @@ function renderContact() {
       </div>
       <div class="form-row">
         <div class="field"><label>Postal code <span class="req">*</span></label><input type="text" name="postal-code" data-crm="Address1PostCode" autocomplete="postal-code" required><span class="error-msg">Required</span></div>
-        <div class="field"><label>Country <span class="req">*</span></label><select name="country-name" data-crm="Address1CountryRegion" autocomplete="country-name" required>${countryOptionsHtml}</select><span class="error-msg">Required</span></div>
+        <div class="field"><label>Country <span class="req">*</span></label><select name="country-name" data-crm="Address1CountryRegion" autocomplete="country-name" required>${COUNTRY_OPTIONS_HTML}</select><span class="error-msg">Required</span></div>
       </div>
       <div class="form-row">
         <div class="field"><label>Phone number <span class="req">*</span></label><input type="tel" name="tel" data-crm="MobilePhone" autocomplete="tel" placeholder="Include country code" required><span class="error-msg">Required</span></div>
@@ -785,26 +778,19 @@ function renderPersonal() {
   return `<div class="card">${getBcHtml()}${getOutcomeHtml()}
     <div class="section-heading">Personal details</div>
     <div class="form-grid">
-      <div class="field"><label>I live in / I'm a resident of… <span class="req">*</span></label><select data-crm="ResidentCountry" required>${'<option value="">Select…</option>' + COUNTRY_OPTIONS.map(c => `<option${c === (state.formData.Address1CountryRegion || "") ? " selected" : ""}>${c}</option>`).join("")}</select><span class="error-msg">Required</span></div>
+      <div class="field"><label>I live in / I'm a resident of… <span class="req">*</span></label><select data-crm="ResidentCountry" required>${COUNTRY_OPTIONS_HTML}</select><span class="error-msg">Required</span></div>
       <div class="form-row">
-        <div class="field"><label>Your employer${country === "CH" ? ' <span class="req">*</span>' : ''}</label><input type="text" data-crm="Employer" autocomplete="organization" placeholder="Employer name"${country === "CH" ? ' required' : ''}>${country === "CH" ? '<span class="error-msg">Required</span>' : ''}</div>
-        <div class="field"><label>Your rank</label>${country === "CH" ? `<select data-crm="Rank" autocomplete="off"><option value="">Select…</option>${optionsHtml(CH_RANK_OPTIONS)}<option value="Other">Other</option></select></div>
+        <div class="field"><label>Your employer</label><input type="text" data-crm="Employer" autocomplete="organization" placeholder="Employer name"></div>
+        <div class="field"><label>Your rank</label><select data-crm="Rank" autocomplete="off"><option value="">Select…</option>${optionsHtml(RANK_OPTIONS)}</select></div>
       </div>
-      <div class="field" id="chRankOtherField" style="display:none;"><label>Please specify your rank / function</label><input type="text" data-crm="RankOther" placeholder="e.g. Hotel manager, Chef de partie"></div>` : `<select data-crm="Rank" autocomplete="off"><option value="">Select…</option>${optionsHtml(RANK_OPTIONS)}</select></div>
-      </div>`}
       ${state.selectedOutcome === "UK K1 membership" ? `<div style="margin-top:12px;padding:16px;background:var(--gray-50);border-radius:var(--radius);">
         <div style="font-weight:600;font-size:15px;margin-bottom:8px;">Reduced rate application</div>
         <div class="field"><label>Additional information</label><textarea data-crm="ReducedRateNotes" rows="3" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-family:inherit;font-size:15px;color:var(--gray-800);resize:vertical;" placeholder="Please provide any details to support your application"></textarea></div>
       </div>` : ``}
-      ${country === "CH" && state.selectedOutcome !== "CH Apprentice fee" ? `<p style="margin-top:12px;font-size:14px;color:var(--gray-600);">If your gross salary is under CHF 2,500/month, you can apply for a reduced rate. We'll review your claim and ask you to supply evidence.</p>
+      ${country === "CH" ? `<p style="margin-top:12px;font-size:14px;color:var(--gray-600);">If your salary is under CHF 2,500/month, you can apply for a reduced rate. We'll review your claim and ask you to supply evidence.</p>
       <div class="field" style="margin-top:8px;"><label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;"><input type="checkbox" id="reducedRateCheck" style="width:auto;"> Apply for reduced rate</label></div>
       <div id="reducedRateFields" style="display:none;">
-        <div class="field"><label>Please provide a monthly payslip</label><input type="file" data-crm="PayslipUpload" accept=".pdf,.jpg,.jpeg,.png" style="padding:8px 0;"></div>
         <div class="field"><label>Additional information</label><textarea data-crm="ReducedRateNotes" rows="3" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius);font-family:inherit;font-size:15px;color:var(--gray-800);resize:vertical;" placeholder="Please provide any details to support your application"></textarea></div>
-      </div>` : ``}
-      ${country === "CH" && state.selectedOutcome === "CH Apprentice fee" ? `<div style="margin-top:12px;padding:16px;background:var(--gray-50);border-radius:var(--radius);">
-        <div style="font-weight:600;font-size:15px;margin-bottom:8px;">Apprenticeship documentation</div>
-        <div class="field"><label>Please provide your apprenticeship contract here</label><input type="file" data-crm="ApprenticeContractUpload" accept=".pdf,.jpg,.jpeg,.png" style="padding:8px 0;"></div>
       </div>` : ``}
     </div>
     <div class="btn-row"><button class="btn-back" id="backBtn">← Previous</button><button class="btn-primary" id="nextBtn">Continue</button></div>
@@ -835,35 +821,15 @@ function renderPayment() {
         <div class="field"><label>Security code (CVV) <span class="req">*</span></label><input type="text" name="cc-csc" data-crm="CardCVV" autocomplete="cc-csc" placeholder="000" required><span class="error-msg">Required</span></div>
       </div>`;
   } else if (state.payMethod === "bt") {
-    if (country === "CH") {
-      payFields = `<div style="margin-bottom:16px;">
-        <div style="font-weight:600;font-size:15px;margin-bottom:8px;">Bank transfer to Nautilus International Swiss Branch</div>
-        <ul style="font-size:14px;color:var(--gray-600);margin:0 0 12px 0;padding-left:20px;line-height:1.6;">
-          <li>You can transfer your membership fee either in euros to our EUR account or in Swiss francs to our CHF account.</li>
-          <li>Please set up a standing order with your bank. It's best to do this for the annual fee to keep administrative costs to a minimum. You can also set up your standing order to be paid every 6 or every 3 months.</li>
-          <li>Insist on the Europe-wide, fee-free SEPA* transfer.</li>
-        </ul>
-        <div style="font-size:14px;color:var(--gray-700);background:var(--gray-50);padding:12px 16px;border-radius:var(--radius);line-height:1.6;">
-          <strong>Bank Cler</strong>, CH-4002 Basel<br>
-          BIC/Swift: BCLRCHBBXXX<br>
-          Clearing: 8440<br>
-          Account: Nautilus International<br><br>
-          <strong>For CHF:</strong> IBAN CH22 0844 0255 4684 1200 1<br>
-          <strong>For EUR:</strong> IBAN CH92 0844 0255 4684 1200 2
-        </div>
-        <p style="font-size:12px;color:var(--gray-500);margin-top:8px;">* With the Single Euro Payments Area (SEPA), payments in Europe are standardised, simple, and transparent. The SEPA area comprises a total of 34 countries: the 28 EU member states, as well as Norway, Iceland, Liechtenstein, Monaco, San Marino, and Switzerland.</p>
+    payFields = `<div class="field"><label>Account holder name <span class="req">*</span></label><input type="text" data-crm="Accountname" autocomplete="off" required><span class="error-msg">Required</span></div>
+      <div class="form-row">
+        <div class="field"><label>Sort code</label><input type="text" data-crm="BT_SortCode" autocomplete="off" placeholder="00-00-00"></div>
+        <div class="field"><label>Account number</label><input type="text" data-crm="BT_Accountnumber" autocomplete="off" placeholder="8-digit number"></div>
       </div>
-      <div class="field"><label>Currency <span class="req">*</span></label><select data-crm="BT_Currency" required><option value="">Select…</option>${optionsHtml(CURRENCY_OPTIONS, "value")}</select><span class="error-msg">Required</span></div>`;
-    } else {
-      payFields = `<div class="field"><label>Account holder name <span class="req">*</span></label><input type="text" data-crm="Accountname" autocomplete="off" required><span class="error-msg">Required</span></div>
-        <div class="form-row">
-          <div class="field"><label>Sort code</label><input type="text" data-crm="BT_SortCode" autocomplete="off" placeholder="00-00-00"></div>
-          <div class="field"><label>Account number</label><input type="text" data-crm="BT_Accountnumber" autocomplete="off" placeholder="8-digit number"></div>
-        </div>
-        <div class="field"><label>IBAN</label><input type="text" data-crm="IBAN" autocomplete="off" placeholder="e.g. CH93 0076 2011 6238 5295 7"></div>
-        <div class="field"><label>BIC / SWIFT</label><input type="text" data-crm="BIC" autocomplete="off" placeholder="e.g. UBSWCHZH80A"></div>
-        <div class="field"><label>Payment reference <span class="req">*</span></label><input type="text" data-crm="BT_Reference" autocomplete="off" placeholder="e.g. invoice or membership number" required><span class="error-msg">Required</span></div>`;
-    }
+      <div class="field"><label>IBAN</label><input type="text" data-crm="IBAN" autocomplete="off" placeholder="e.g. CH93 0076 2011 6238 5295 7"></div>
+      <div class="field"><label>BIC / SWIFT</label><input type="text" data-crm="BIC" autocomplete="off" placeholder="e.g. UBSWCHZH80A"></div>
+      ${country === "CH" ? `<div class="field"><label>Currency <span class="req">*</span></label><select data-crm="BT_Currency" required><option value="">Select…</option>${optionsHtml(CURRENCY_OPTIONS, "value")}</select><span class="error-msg">Required</span></div>` : ""}
+      <div class="field"><label>Payment reference <span class="req">*</span></label><input type="text" data-crm="BT_Reference" autocomplete="off" placeholder="e.g. invoice or membership number" required><span class="error-msg">Required</span></div>`;
   }
 
   const toggleHtml = tabs.map(t =>
@@ -880,8 +846,7 @@ function renderPayment() {
     ${country === "NL" ? `<div style="margin-top:16px;padding:16px;background:var(--gray-50);border-radius:var(--radius);">
       <div style="font-weight:600;font-size:15px;margin-bottom:8px;">Publications</div>
       <div class="field" style="margin-bottom:8px;"><label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" id="nlTelegraph" data-crm="Telegraph" style="width:auto;"> Physical copy of Telegraph</label></div>
-      <div class="field" style="margin-bottom:8px;"><label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" id="nlSWZDigital" data-crm="SWZDigital" style="width:auto;"> Digital copy of SWZ Maritime (€3.95/month)</label></div>
-      <div class="field"><label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" id="nlSWZPhysical" data-crm="SWZPhysical" style="width:auto;"> Physical copy of SWZ Maritime (€4.13/month)</label></div>
+      <div class="field"><label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" id="nlSWZ" data-crm="SWZ" style="width:auto;"> Physical copy of SWZ Maritime — additional €3.95 per month</label></div>
     </div>` : ""}
     <div style="margin-top:16px;padding:16px;background:var(--gray-50);border-radius:var(--radius);">
       <div class="field"><label style="display:flex;align-items:flex-start;gap:8px;font-weight:400;cursor:pointer;"><input type="checkbox" data-crm="NautilusPlus" style="width:auto;margin-top:3px;"> <span>On top of the familiar benefits of trade union membership, Nautilus has negotiated a range of deals and/or discounts on the services and products that members use most often. Would you like to receive information about these benefits?</span></label></div>
@@ -1226,32 +1191,15 @@ function bindEvents() {
   });
   const pay = document.getElementById("payBtn");
   if (pay) pay.addEventListener("click", () => validateAndProceed("interstitial"));
-  const rankSelect = document.querySelector('[data-crm="Rank"]');
-  const chRankOtherField = document.getElementById("chRankOtherField");
-  if (rankSelect && chRankOtherField) {
-    chRankOtherField.style.display = rankSelect.value === "Other" ? "block" : "none";
-    rankSelect.addEventListener("change", () => {
-      chRankOtherField.style.display = rankSelect.value === "Other" ? "block" : "none";
-    });
-  }
   const reducedCheck = document.getElementById("reducedRateCheck");
   if (reducedCheck) reducedCheck.addEventListener("change", () => {
     document.getElementById("reducedRateFields").style.display = reducedCheck.checked ? "block" : "none";
   });
-  const nlSWZDigital = document.getElementById("nlSWZDigital");
-  if (nlSWZDigital) {
-    nlSWZDigital.checked = state.swzDigitalOptIn;
-    nlSWZDigital.addEventListener("change", () => {
-      state.swzDigitalOptIn = nlSWZDigital.checked;
-      const card = document.querySelector(".outcome-card");
-      if (card) card.outerHTML = getOutcomeHtml();
-    });
-  }
-  const nlSWZPhysical = document.getElementById("nlSWZPhysical");
-  if (nlSWZPhysical) {
-    nlSWZPhysical.checked = state.swzPhysicalOptIn;
-    nlSWZPhysical.addEventListener("change", () => {
-      state.swzPhysicalOptIn = nlSWZPhysical.checked;
+  const nlSWZ = document.getElementById("nlSWZ");
+  if (nlSWZ) {
+    nlSWZ.checked = state.swzOptIn;
+    nlSWZ.addEventListener("change", () => {
+      state.swzOptIn = nlSWZ.checked;
       const card = document.querySelector(".outcome-card");
       if (card) card.outerHTML = getOutcomeHtml();
     });
@@ -1277,7 +1225,7 @@ function bindEvents() {
   });
   const re = document.getElementById("restartBtn");
   if (re) re.addEventListener("click", () => {
-    state = { history:[], currentQ:"Q1", selectedOutcome:null, unclearOutcome:null, phase:"questions", payMethod:null, formData:{}, swzDigitalOptIn:false, swzPhysicalOptIn:false };
+    state = { history:[], currentQ:"Q1", selectedOutcome:null, unclearOutcome:null, phase:"questions", payMethod:null, formData:{}, swzOptIn:false };
     render();
   });
   // Live CRM updates on member profile page
